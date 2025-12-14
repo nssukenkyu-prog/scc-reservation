@@ -44,26 +44,17 @@ app.get('/api/slots', async (c) => {
         current.setMinutes(current.getMinutes() + 15);
         const endTime = current.toTimeString().slice(0, 5);
 
-        // Create separate slots for '初診' and '再診'
-        const slot1: Slot = {
+        // Create SHARED slot for both '初診' and '再診'
+        const slot: Slot = {
             slotId: crypto.randomUUID(),
             date,
             startTime,
             endTime,
-            visitType: '初診',
+            visitType: 'shared', // Indicates it can be used by either
             status: 'free'
         };
 
-        const slot2: Slot = {
-            slotId: crypto.randomUUID(),
-            date,
-            startTime,
-            endTime,
-            visitType: '再診',
-            status: 'free'
-        };
-
-        slots.push(slot1, slot2);
+        slots.push(slot);
     }
 
     const sheets = new SheetsService(c.env);

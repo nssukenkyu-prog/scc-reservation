@@ -1,6 +1,6 @@
 import { useState, useEffect, type FormEvent } from 'react'
 
-type VisitType = '初診' | '再診';
+type VisitType = '初診' | '再診' | 'shared';
 
 interface Slot {
   slotId: string;
@@ -123,8 +123,10 @@ function App() {
 
   // Logic to filter slots
   const filteredSlots = slots.filter(slot => {
-    if (view === 'booking' && slot.visitType !== visitType) return false;
+    // 1. Filter by Visit Type (Accept 'shared' slots for everyone)
+    if (view === 'booking' && slot.visitType !== 'shared' && slot.visitType !== visitType) return false;
 
+    // 2. Filter by Time (Realtime restriction: > 15 mins from now)
     const now = new Date();
     const selected = new Date(selectedDate);
     const isToday = selected.toDateString() === now.toDateString();
@@ -335,15 +337,17 @@ function App() {
 
             {selectedSlot && (
               <div style={{
-                marginTop: '2rem',
+                marginTop: '1.5rem', // Match padding of parent
                 animation: 'slideUp 0.4s ease-out',
                 background: 'rgba(255,255,255,0.95)',
                 backdropFilter: 'blur(10px)',
-                padding: '2.5rem',
-                borderRadius: '32px',
+                padding: '2rem',
+                borderRadius: '24px',
                 boxShadow: '0 25px 50px -12px rgba(0,0,0,0.1)',
                 border: '1px solid rgba(255,255,255,0.8)',
-                margin: '2rem auto'
+                // Ensure same width behavior as the Date/Time card above
+                width: '100%',
+                boxSizing: 'border-box'
               }}>
                 <h3 style={{ marginTop: 0, fontSize: '1.4rem', color: '#0f172a', marginBottom: '2rem', textAlign: 'center' }}>情報をご入力ください。</h3>
                 <form onSubmit={handleConfirm} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>

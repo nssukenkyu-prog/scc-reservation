@@ -6,7 +6,7 @@ export interface Env {
     CALENDAR_ID: string;
 }
 
-export type VisitType = '初診' | '再診';
+export type VisitType = '初診' | '再診' | 'shared';
 
 export interface Patient {
     patientId: string;
