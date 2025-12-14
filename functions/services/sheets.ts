@@ -87,6 +87,7 @@ export class SheetsService {
             resv.googleEventId || '',
             resv.status,
             resv.createdAt,
+            resv.email || '',
         ];
 
         await fetch(url, {

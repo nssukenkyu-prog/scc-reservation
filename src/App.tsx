@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, FormEvent } from 'react'
 
 type VisitType = '初診' | '再診';
 interface Slot {
@@ -46,7 +46,7 @@ function App() {
     }
   }, [view, selectedDate]);
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e: FormEvent) => {
     setLoading(true);
     try {
       const res = await fetch('/api/bookings', {
@@ -92,9 +92,9 @@ function App() {
   };
 
   return (
-    <div style={{ maxWidth: '600px', margin: '0 auto', padding: '20px', paddingBottom: '60px' }}>
+    <div style={{ maxWidth: '600px', margin: '0 auto', padding: '20px', paddingBottom: '100px' }}>
       <header style={{ textAlign: 'center', marginBottom: '2rem' }}>
-        <img src="/logo.jpg" alt="SCC Logo" style={{ maxWidth: '200px', marginBottom: '1rem' }} />
+        <img src="/logo.jpg" alt="SCC Logo" style={{ maxWidth: '200px', marginBottom: '1rem', display: 'block', margin: '0 auto 1rem auto' }} />
         <h1 style={{
           fontSize: '1.4rem',
           color: 'var(--color-primary)',
