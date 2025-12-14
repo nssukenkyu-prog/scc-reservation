@@ -163,201 +163,230 @@ function App() {
       <main className="glass-panel" style={{ padding: '0', background: 'transparent', boxShadow: 'none', border: 'none' }}>
 
         {view === 'lp' && (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', animation: 'fadeIn Up 0.6s ease' }}>
 
             <div style={{
-              background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
+              background: 'rgba(255, 255, 255, 0.9)',
+              backdropFilter: 'blur(10px)',
               padding: '2rem',
               borderRadius: '24px',
-              boxShadow: '0 4px 20px rgba(0,0,0,0.06)',
-              border: '1px solid rgba(255,255,255,0.8)'
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.05)',
+              border: '1px solid rgba(255, 255, 255, 0.5)'
             }}>
-              <h3 style={{ marginTop: 0, color: '#0f172a', fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span style={{ display: 'inline-block', width: '6px', height: '24px', background: '#0284c7', borderRadius: '4px' }}></span>
+              <h3 style={{ marginTop: 0, color: '#0f172a', fontSize: '1.2rem', display: 'flex', alignItems: 'center', gap: '10px', fontWeight: '800' }}>
+                <span style={{ display: 'inline-block', width: '6px', height: '24px', background: 'linear-gradient(to bottom, #3b82f6, #06b6d4)', borderRadius: '4px' }}></span>
                 ご利用について
               </h3>
-              <p style={{ lineHeight: '1.8', margin: '1rem 0 0 0', color: '#334155' }}>
+              <p style={{ lineHeight: '1.8', margin: '1rem 0 0 0', color: '#334155', fontSize: '0.95rem' }}>
                 本システムは、<span style={{ fontWeight: 'bold', color: '#0f172a' }}>初診・再診の患者様</span>を円滑にご案内するための専用予約ページです。
               </p>
 
-              <div style={{ marginTop: '1.5rem', background: '#fee2e2', color: '#b91c1c', padding: '1rem', borderRadius: '12px', fontSize: '0.95rem', fontWeight: 'bold', border: '1px solid #fecaca', display: 'flex', gap: '12px', alignItems: 'center' }}>
-                <span style={{ fontSize: '1.5rem' }}>⚠️</span>
-                <span>現在継続して治療中の方は、本システムからの予約は承っておりません。</span>
+              <div style={{ marginTop: '1.5rem', background: '#eff6ff', color: '#1e40af', padding: '1rem', borderRadius: '16px', fontSize: '0.95rem', fontWeight: 'bold', border: '1px solid #dbeafe', display: 'flex', gap: '12px', alignItems: 'center' }}>
+                <span style={{ fontSize: '1.5rem' }}>ℹ️</span>
+                <span>現在継続して治療中の方は、予約は承っておりません。</span>
               </div>
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
               <button
                 style={{
-                  background: 'linear-gradient(135deg, #0f172a 0%, #334155 100%)',
+                  background: 'linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)',
                   color: 'white',
                   border: 'none',
                   padding: '1.8rem',
-                  borderRadius: '20px',
+                  borderRadius: '24px',
                   textAlign: 'left',
                   cursor: 'pointer',
-                  boxShadow: '0 10px 25px -5px rgba(15, 23, 42, 0.3)',
+                  boxShadow: '0 15px 30px -5px rgba(59, 130, 246, 0.4)',
                   transition: 'transform 0.2s',
                   position: 'relative',
                   overflow: 'hidden'
                 }}
                 onClick={() => { setVisitType('初診'); setView('booking'); }}
+                className="hover-scale"
               >
                 <div style={{ position: 'relative', zIndex: 1 }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                    <span style={{ fontSize: '1.4rem', fontWeight: 'bold' }}>初診の方はこちら</span>
-                    <span style={{ background: 'rgba(255,255,255,0.2)', padding: '4px 12px', borderRadius: '99px', fontSize: '0.8rem', fontWeight: 'bold' }}>First Visit</span>
+                    <span style={{ fontSize: '1.4rem', fontWeight: '800', letterSpacing: '0.05em' }}>初診の方はこちら</span>
+                    <span style={{ background: 'rgba(255,255,255,0.2)', padding: '6px 16px', borderRadius: '99px', fontSize: '0.75rem', fontWeight: 'bold', letterSpacing: '0.1em' }}>FIRST VISIT</span>
                   </div>
-                  <span style={{ fontSize: '0.9rem', color: '#cbd5e1' }}>※ 当院での治療が初めての方</span>
+                  <span style={{ fontSize: '0.9rem', color: '#bfdbfe', display: 'block', marginTop: '4px' }}>※ 当院での治療が初めての方</span>
                 </div>
               </button>
 
               <button
                 style={{
-                  background: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)',
+                  background: 'linear-gradient(135deg, #0ea5e9 0%, #67e8f9 100%)',
                   color: 'white',
                   border: 'none',
                   padding: '1.8rem',
-                  borderRadius: '20px',
+                  borderRadius: '24px',
                   textAlign: 'left',
                   cursor: 'pointer',
-                  boxShadow: '0 10px 25px -5px rgba(2, 132, 199, 0.4)',
-                  transition: 'transform 0.2s'
+                  boxShadow: '0 15px 30px -5px rgba(14, 165, 233, 0.4)',
+                  transition: 'transform 0.2s',
+                  position: 'relative',
+                  overflow: 'hidden'
                 }}
                 onClick={() => { setVisitType('再診'); setView('booking'); }}
+                className="hover-scale"
               >
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                  <span style={{ fontSize: '1.4rem', fontWeight: 'bold' }}>再診の方はこちら</span>
-                  <span style={{ background: 'rgba(255,255,255,0.2)', padding: '4px 12px', borderRadius: '99px', fontSize: '0.8rem', fontWeight: 'bold' }}>Re-Visit</span>
+                <div style={{ position: 'relative', zIndex: 1 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                    <span style={{ fontSize: '1.4rem', fontWeight: '800', letterSpacing: '0.05em' }}>再診の方はこちら</span>
+                    <span style={{ background: 'rgba(255,255,255,0.25)', padding: '6px 16px', borderRadius: '99px', fontSize: '0.75rem', fontWeight: 'bold', letterSpacing: '0.1em' }}>RE-VISIT</span>
+                  </div>
+                  <span style={{ fontSize: '0.9rem', color: '#f0f9ff', display: 'block', marginTop: '4px' }}>
+                    ※ 前回の来院から1ヶ月以上経過している方<br />
+                    ※ 現在治療中の部位とは異なる場所の治療の方
+                  </span>
                 </div>
-                <span style={{ fontSize: '0.9rem', color: '#e0f2fe' }}>
-                  ※ 前回の来院から1ヶ月以上経過している方<br />
-                  ※ 現在治療中の部位とは異なる場所の治療の方
-                </span>
               </button>
             </div>
           </div>
         )}
 
         {view === 'booking' && (
-          <div style={{ animation: 'fadeIn 0.3s ease-out' }}>
-            <button onClick={() => setView('lp')} style={{ padding: '0', background: 'transparent', border: 'none', cursor: 'pointer', color: '#64748b', display: 'flex', alignItems: 'center', gap: '4px', marginBottom: '1rem', fontSize: '0.9rem' }}>
+          <div style={{ animation: 'fadeIn 0.4s ease-out' }}>
+            <button onClick={() => setView('lp')} style={{ padding: '0.8rem 1.2rem', background: 'white', borderRadius: '99px', border: '1px solid #e2e8f0', cursor: 'pointer', color: '#64748b', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '1.5rem', fontSize: '0.9rem', fontWeight: 'bold', boxShadow: '0 2px 5px rgba(0,0,0,0.05)' }}>
               <span>←</span>戻る
             </button>
-            <h2 style={{ fontSize: '1.8rem', color: '#0f172a', marginBottom: '0.5rem' }}>{visitType}予約</h2>
+            <h2 style={{ fontSize: '2rem', color: '#1e293b', marginBottom: '0.5rem', fontWeight: '800' }}>{visitType}予約</h2>
             <p style={{ color: '#64748b', marginTop: 0, marginBottom: '2rem' }}>ご希望の日時を選択してください。</p>
 
-            <div style={{ background: 'white', padding: '1.5rem', borderRadius: '20px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)', marginBottom: '1.5rem' }}>
-              <label style={{ display: 'block', marginBottom: '0.8rem', fontWeight: 'bold', color: '#334155', fontSize: '0.9rem' }}>日付を選択</label>
-              <div style={{ position: 'relative' }}>
-                <select
-                  value={selectedDate}
-                  onChange={(e) => setSelectedDate(e.target.value)}
-                  style={{
-                    appearance: 'none',
-                    padding: '1rem',
-                    borderRadius: '12px',
-                    border: '1px solid #e2e8f0',
-                    width: '100%',
-                    fontSize: '1.1rem',
-                    background: '#f8fafc',
-                    color: '#0f172a',
-                    fontWeight: 'bold',
-                    cursor: 'pointer'
-                  }}
-                >
-                  {dateOptions.map(opt => (
-                    <option key={opt.value} value={opt.value}>{opt.label}</option>
-                  ))}
-                </select>
-                <div style={{ position: 'absolute', right: '1rem', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: '#64748b' }}>▼</div>
+            <div style={{ background: 'white', padding: '2rem', borderRadius: '24px', boxShadow: '0 20px 40px -5px rgba(0,0,0,0.05)', marginBottom: '1.5rem', border: '1px solid rgba(255,255,255,0.5)' }}>
+
+              <div style={{ marginBottom: '2rem' }}>
+                <label style={{ display: 'block', marginBottom: '0.8rem', fontWeight: 'bold', color: '#334155', fontSize: '0.9rem' }}>日付</label>
+                <div style={{ position: 'relative' }}>
+                  <select
+                    value={selectedDate}
+                    onChange={(e) => setSelectedDate(e.target.value)}
+                    style={{
+                      appearance: 'none',
+                      padding: '1.2rem',
+                      borderRadius: '16px',
+                      border: '2px solid #e2e8f0',
+                      width: '100%',
+                      fontSize: '1.1rem',
+                      background: '#f8fafc',
+                      color: '#0f172a',
+                      fontWeight: 'bold',
+                      cursor: 'pointer',
+                      outline: 'none',
+                      transition: 'border-color 0.2s'
+                    }}
+                  >
+                    {dateOptions.map(opt => (
+                      <option key={opt.value} value={opt.value}>{opt.label}</option>
+                    ))}
+                  </select>
+                  <div style={{ position: 'absolute', right: '1.5rem', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: '#64748b' }}>▼</div>
+                </div>
               </div>
-            </div>
 
-            {loading ? (
-              <div style={{ padding: '3rem', textAlign: 'center', color: '#94a3b8' }}>読み込み中...</div>
-            ) : (
-              <div>
-                <h3 style={{ fontSize: '1rem', color: '#64748b', marginBottom: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span>予約可能な時間</span>
-                  <span style={{ fontSize: '0.8rem', fontWeight: 'normal', background: '#f1f5f9', padding: '2px 8px', borderRadius: '4px' }}>{filteredSlots.length}枠</span>
-                </h3>
+              {loading ? (
+                <div style={{ padding: '3rem', textAlign: 'center', color: '#94a3b8' }}>タイムテーブルを読み込み中...</div>
+              ) : (
+                <div>
+                  <label style={{ display: 'block', marginBottom: '0.8rem', fontWeight: 'bold', color: '#334155', fontSize: '0.9rem' }}>時間</label>
 
-                {filteredSlots.length === 0 ? (
-                  <div style={{ padding: '3rem', textAlign: 'center', color: '#64748b', background: '#f8fafc', borderRadius: '16px', border: '1px dashed #cbd5e1' }}>
-                    <p style={{ fontWeight: 'bold', marginBottom: '0.5rem' }}>予約可能な枠がありません</p>
-                    <p style={{ fontSize: '0.9rem' }}>別の日付を選択してください。</p>
-                  </div>
-                ) : (
-                  <div className="slot-grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '12px' }}>
-                    {filteredSlots.map(slot => (
-                      <button
-                        key={slot.slotId}
-                        disabled={slot.status === 'booked'}
-                        onClick={() => setSelectedSlot(slot)}
+                  {filteredSlots.length === 0 ? (
+                    <div style={{ padding: '2rem', textAlign: 'center', color: '#64748b', background: '#f8fafc', borderRadius: '16px', border: '2px dashed #cbd5e1' }}>
+                      <p style={{ fontWeight: 'bold', marginBottom: '0.5rem' }}>予約可能な枠がありません</p>
+                      <p style={{ fontSize: '0.9rem' }}>別の日付を選択してください。</p>
+                    </div>
+                  ) : (
+                    <div style={{ position: 'relative' }}>
+                      <select
+                        value={selectedSlot?.slotId || ''}
+                        onChange={(e) => {
+                          const slot = filteredSlots.find(s => s.slotId === e.target.value);
+                          setSelectedSlot(slot || null);
+                        }}
                         style={{
-                          background: slot.status === 'booked' ? '#f1f5f9' : (selectedSlot?.slotId === slot.slotId ? '#0f172a' : '#ffffff'),
-                          color: slot.status === 'booked' ? '#cbd5e1' : (selectedSlot?.slotId === slot.slotId ? '#ffffff' : '#0f172a'),
-                          border: slot.status === 'booked' ? '1px solid #f1f5f9' : (selectedSlot?.slotId === slot.slotId ? '1px solid #0f172a' : '1px solid #e2e8f0'),
-                          borderRadius: '12px',
-                          padding: '1rem 0.5rem',
-                          cursor: slot.status === 'booked' ? 'not-allowed' : 'pointer',
-                          transition: 'all 0.2s',
-                          display: 'flex',
-                          flexDirection: 'column',
-                          alignItems: 'center',
-                          gap: '4px',
-                          boxShadow: selectedSlot?.slotId === slot.slotId ? '0 10px 15px -3px rgba(15, 23, 42, 0.2)' : 'none'
+                          appearance: 'none',
+                          padding: '1.2rem',
+                          borderRadius: '16px',
+                          border: '2px solid #3b82f6',
+                          width: '100%',
+                          fontSize: '1.1rem',
+                          background: '#eff6ff',
+                          color: '#1e3a8a',
+                          fontWeight: 'bold',
+                          cursor: 'pointer',
+                          outline: 'none'
                         }}
                       >
-                        <span style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>{slot.startTime}</span>
-                        <span style={{ fontSize: '0.75rem', opacity: slot.status === 'booked' ? 1 : 0.8 }}>
-                          {slot.status === 'booked' ? 'FULL' : 'OPEN'}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
+                        <option value="" disabled>時間を選択してください</option>
+                        {filteredSlots.map(slot => (
+                          <option key={slot.slotId} value={slot.slotId} disabled={slot.status === 'booked'}>
+                            {slot.startTime} {slot.status === 'booked' ? '(満席)' : '◎ 予約可'}
+                          </option>
+                        ))}
+                      </select>
+                      <div style={{ position: 'absolute', right: '1.5rem', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: '#3b82f6', fontWeight: 'bold' }}>▼</div>
+                    </div>
+                  )}
+                  {filteredSlots.length > 0 && <p style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '0.8rem', textAlign: 'right' }}>※現在時刻から15分以内の枠は選択できません</p>}
+                </div>
+              )}
+            </div>
 
             {selectedSlot && (
-              <div style={{ marginTop: '2rem', animation: 'fadeIn 0.3s ease-in', background: '#ffffff', padding: '2rem', borderRadius: '24px', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)' }}>
-                <h3 style={{ marginTop: 0, fontSize: '1.2rem', color: '#0f172a', marginBottom: '1.5rem', borderBottom: '1px solid #f1f5f9', paddingBottom: '1rem' }}>お客様情報の入力</h3>
-                <form onSubmit={handleConfirm} style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
+              <div style={{
+                marginTop: '2rem',
+                animation: 'slideUp 0.4s ease-out',
+                background: 'rgba(255,255,255,0.95)',
+                backdropFilter: 'blur(10px)',
+                padding: '2.5rem',
+                borderRadius: '32px',
+                boxShadow: '0 25px 50px -12px rgba(0,0,0,0.1)',
+                border: '1px solid rgba(255,255,255,0.8)',
+                maxWidth: '500px', // Prevent too wide
+                margin: '2rem auto'
+              }}>
+                <h3 style={{ marginTop: 0, fontSize: '1.4rem', color: '#0f172a', marginBottom: '2rem', textAlign: 'center' }}>情報をご入力ください。</h3>
+                <form onSubmit={handleConfirm} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                   <div>
-                    <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.9rem', color: '#64748b', fontWeight: 'bold' }}>お名前</label>
+                    <label style={{ display: 'block', marginBottom: '0.6rem', fontSize: '0.9rem', color: '#475569', fontWeight: 'bold' }}>お名前</label>
                     <input
                       required
                       placeholder="例: 山田 太郎"
-                      style={{ width: '100%', padding: '1rem', borderRadius: '12px', border: '1px solid #e2e8f0', fontSize: '1rem', background: '#f8fafc' }}
+                      style={{ width: '100%', padding: '1.2rem', borderRadius: '16px', border: '2px solid #e2e8f0', fontSize: '1rem', background: '#f8fafc', transition: 'all 0.2s', outline: 'none' }}
+                      onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
+                      onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
                       value={formData.name}
                       onChange={e => setFormData({ ...formData, name: e.target.value })}
                     />
                   </div>
                   <div>
-                    <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.9rem', color: '#64748b', fontWeight: 'bold' }}>電話番号</label>
+                    <label style={{ display: 'block', marginBottom: '0.6rem', fontSize: '0.9rem', color: '#475569', fontWeight: 'bold' }}>電話番号</label>
                     <input
                       required
                       placeholder="例: 090-1234-5678"
-                      style={{ width: '100%', padding: '1rem', borderRadius: '12px', border: '1px solid #e2e8f0', fontSize: '1rem', background: '#f8fafc' }}
+                      style={{ width: '100%', padding: '1.2rem', borderRadius: '16px', border: '2px solid #e2e8f0', fontSize: '1rem', background: '#f8fafc', transition: 'all 0.2s', outline: 'none' }}
+                      onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
+                      onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
                       value={formData.phone}
                       onChange={e => setFormData({ ...formData, phone: e.target.value })}
                     />
                   </div>
                   <div>
-                    <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.9rem', color: '#64748b', fontWeight: 'bold' }}>メールアドレス</label>
+                    <label style={{ display: 'block', marginBottom: '0.6rem', fontSize: '0.9rem', color: '#475569', fontWeight: 'bold' }}>メールアドレス</label>
                     <input
                       required
                       type="email"
-                      placeholder="予約完了メールをお送りします"
-                      style={{ width: '100%', padding: '1rem', borderRadius: '12px', border: '1px solid #e2e8f0', fontSize: '1rem', background: '#f8fafc' }}
+                      placeholder="example@email.com"
+                      style={{ width: '100%', padding: '1.2rem', borderRadius: '16px', border: '2px solid #e2e8f0', fontSize: '1rem', background: '#f8fafc', transition: 'all 0.2s', outline: 'none' }}
+                      onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
+                      onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
                       value={formData.email}
                       onChange={e => setFormData({ ...formData, email: e.target.value })}
                     />
                   </div>
-                  <button type="submit" className="btn-primary" style={{ marginTop: '1rem', padding: '1.2rem', borderRadius: '14px', fontSize: '1.1rem', fontWeight: 'bold', background: '#0f172a', color: 'white', border: 'none', cursor: 'pointer', boxShadow: '0 10px 15px -3px rgba(15, 23, 42, 0.3)' }}>
-                    確認画面へ進む
+                  <button type="submit" className="btn-primary hover-scale" style={{ marginTop: '1.5rem', padding: '1.4rem', borderRadius: '20px', fontSize: '1.1rem', fontWeight: 'bold', background: '#0f172a', color: 'white', border: 'none', cursor: 'pointer', boxShadow: '0 10px 20px -5px rgba(15, 23, 42, 0.4)', transition: 'transform 0.1s' }}>
+                    確認画面へ進む →
                   </button>
                 </form>
               </div>
@@ -372,27 +401,27 @@ function App() {
             </button>
             <h2 style={{ fontSize: '1.6rem', color: '#0f172a', marginBottom: '1.5rem', textAlign: 'center' }}>内容の確認</h2>
 
-            <div style={{ background: 'white', padding: '2rem', borderRadius: '24px', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.1)', marginBottom: '2rem' }}>
+            <div style={{ background: 'white', padding: '2.5rem', borderRadius: '32px', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.1)', marginBottom: '2rem', maxWidth: '500px', margin: '0 auto 2rem auto' }}>
               <div style={{ display: 'grid', gap: '1.5rem' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #f1f5f9', paddingBottom: '1rem' }}>
                   <span style={{ color: '#64748b' }}>予約日時</span>
-                  <span style={{ fontWeight: 'bold', fontSize: '1.1rem' }}>{selectedDate} {selectedSlot.startTime}</span>
+                  <span style={{ fontWeight: 'bold', fontSize: '1.1rem', color: '#0f172a' }}>{selectedDate} {selectedSlot.startTime}</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #f1f5f9', paddingBottom: '1rem' }}>
                   <span style={{ color: '#64748b' }}>種別</span>
-                  <span style={{ fontWeight: 'bold' }}>{visitType}</span>
+                  <span style={{ fontWeight: 'bold', color: '#0284c7' }}>{visitType}</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #f1f5f9', paddingBottom: '1rem' }}>
                   <span style={{ color: '#64748b' }}>お名前</span>
-                  <span style={{ fontWeight: 'bold' }}>{formData.name}</span>
+                  <span style={{ fontWeight: 'bold', color: '#0f172a' }}>{formData.name}</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #f1f5f9', paddingBottom: '1rem' }}>
                   <span style={{ color: '#64748b' }}>電話番号</span>
-                  <span style={{ fontWeight: 'bold' }}>{formData.phone}</span>
+                  <span style={{ fontWeight: 'bold', color: '#0f172a' }}>{formData.phone}</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                   <span style={{ color: '#64748b' }}>メールアドレス</span>
-                  <span style={{ fontWeight: 'bold' }}>{formData.email}</span>
+                  <span style={{ fontWeight: 'bold', color: '#0f172a', wordBreak: 'break-all', maxWidth: '60%', textAlign: 'right' }}>{formData.email}</span>
                 </div>
               </div>
             </div>
@@ -403,14 +432,19 @@ function App() {
               style={{
                 width: '100%',
                 padding: '1.5rem',
-                borderRadius: '16px',
+                borderRadius: '20px',
                 fontSize: '1.2rem',
                 fontWeight: 'bold',
                 background: loading ? '#94a3b8' : '#0f172a',
                 color: 'white',
                 border: 'none',
                 cursor: loading ? 'wait' : 'pointer',
-                boxShadow: '0 10px 15px -3px rgba(15, 23, 42, 0.4)'
+                boxShadow: '0 20px 25px -5px rgba(15, 23, 42, 0.4)',
+                transform: loading ? 'none' : 'translateY(0)',
+                transition: 'all 0.2s',
+                maxWidth: '500px',
+                margin: '0 auto',
+                display: 'block'
               }}
             >
               {loading ? '処理中...' : 'この内容で予約を確定する'}
@@ -420,19 +454,19 @@ function App() {
 
         {view === 'success' && (
           <div style={{ textAlign: 'center', padding: '3rem 1rem', animation: 'fadeIn 0.5s ease-out' }}>
-            <div style={{ width: '80px', height: '80px', background: '#dcfce7', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 2rem auto' }}>
-              <span style={{ fontSize: '3rem', color: '#166534' }}>✓</span>
+            <div style={{ width: '100px', height: '100px', background: '#dcfce7', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 2rem auto', boxShadow: '0 20px 25px -5px rgba(22, 101, 52, 0.2)' }}>
+              <span style={{ fontSize: '4rem', color: '#166534' }}>✓</span>
             </div>
-            <h2 style={{ fontSize: '1.8rem', color: '#0f172a', marginBottom: '1rem' }}>予約完了</h2>
+            <h2 style={{ fontSize: '2rem', color: '#0f172a', marginBottom: '1rem', fontWeight: '800' }}>予約完了</h2>
             <p style={{ color: '#64748b', lineHeight: '1.8', marginBottom: '3rem' }}>
               ご予約ありがとうございます。<br />
-              確認メールをお送りしましたのでご確認ください。<br />
+              確認メールをお送りしました。<br />
               <br />
-              <span style={{ fontSize: '0.9rem', opacity: 0.8 }}>日時: {selectedDate} {selectedSlot?.startTime}</span>
+              <span style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#0f172a' }}>{selectedDate} {selectedSlot?.startTime} ({visitType})</span>
             </p>
             <button
               onClick={() => { setView('lp'); setSelectedSlot(null); setFormData({ name: '', phone: '', email: '' }); }}
-              style={{ padding: '1rem 3rem', borderRadius: '99px', background: '#f1f5f9', color: '#0f172a', border: 'none', fontWeight: 'bold', cursor: 'pointer' }}
+              style={{ padding: '1.2rem 4rem', borderRadius: '99px', background: 'white', color: '#0f172a', border: '2px solid #e2e8f0', fontWeight: 'bold', cursor: 'pointer', fontSize: '1rem' }}
             >
               トップへ戻る
             </button>
@@ -440,56 +474,56 @@ function App() {
         )}
 
         {view === 'admin' && (
-          <div style={{ background: 'white', padding: '2rem', borderRadius: '16px' }}>
+          <div style={{ background: 'white', padding: '2rem', borderRadius: '24px', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.1)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-              <h2 style={{ margin: 0 }}>管理画面</h2>
-              <button onClick={() => setView('lp')} style={{ padding: '0.5rem 1rem', background: '#f1f5f9', border: 'none', borderRadius: '8px', cursor: 'pointer' }}>ログアウト</button>
+              <h2 style={{ margin: 0, color: '#0f172a' }}>管理画面</h2>
+              <button onClick={() => setView('lp')} style={{ padding: '0.6rem 1.2rem', background: '#f1f5f9', border: 'none', borderRadius: '12px', cursor: 'pointer', fontWeight: 'bold', color: '#475569' }}>ログアウト</button>
             </div>
 
             <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem', flexWrap: 'wrap', alignItems: 'center' }}>
               <select
                 value={selectedDate}
                 onChange={(e) => setSelectedDate(e.target.value)}
-                style={{ padding: '0.8rem', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+                style={{ padding: '1rem', borderRadius: '12px', border: '1px solid #cbd5e1', fontSize: '1rem' }}
               >
                 {dateOptions.map(opt => (
                   <option key={opt.value} value={opt.value}>{opt.label}</option>
                 ))}
               </select>
-              <button className="btn-primary" onClick={fetchSlots}>更新</button>
-              <button className="btn-primary" style={{ background: '#059669', marginLeft: 'auto' }} onClick={handleAdminGenerateSlots}>枠を自動生成</button>
+              <button className="btn-primary" onClick={fetchSlots} style={{ padding: '1rem 2rem', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '12px', fontWeight: 'bold' }}>更新</button>
+              <button style={{ padding: '1rem 2rem', background: '#10b981', color: 'white', border: 'none', borderRadius: '12px', marginLeft: 'auto', fontWeight: 'bold', cursor: 'pointer' }} onClick={handleAdminGenerateSlots}>枠自動生成</button>
             </div>
 
             <div style={{ overflowX: 'scroll' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '600px', fontSize: '0.9rem' }}>
                 <thead>
                   <tr style={{ background: '#f8fafc', borderBottom: '2px solid #e2e8f0' }}>
-                    <th style={{ padding: '12px', textAlign: 'left', color: '#64748b' }}>時間</th>
-                    <th style={{ padding: '12px', textAlign: 'left', color: '#64748b' }}>種別</th>
-                    <th style={{ padding: '12px', textAlign: 'left', color: '#64748b' }}>状態</th>
-                    <th style={{ padding: '12px', textAlign: 'left', color: '#64748b' }}>操作</th>
+                    <th style={{ padding: '16px', textAlign: 'left', color: '#64748b' }}>時間</th>
+                    <th style={{ padding: '16px', textAlign: 'left', color: '#64748b' }}>種別</th>
+                    <th style={{ padding: '16px', textAlign: 'left', color: '#64748b' }}>状態</th>
+                    <th style={{ padding: '16px', textAlign: 'left', color: '#64748b' }}>操作</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {slots.length === 0 ? <tr><td colSpan={4} style={{ padding: '2rem', textAlign: 'center', color: '#94a3b8' }}>データがありません</td></tr> : slots.map(slot => (
+                  {slots.length === 0 ? <tr><td colSpan={4} style={{ padding: '3rem', textAlign: 'center', color: '#94a3b8' }}>データがありません</td></tr> : slots.map(slot => (
                     <tr key={slot.slotId} style={{ borderBottom: '1px solid #f1f5f9' }}>
-                      <td style={{ padding: '12px', fontWeight: 'bold' }}>{slot.startTime}</td>
-                      <td style={{ padding: '12px' }}><span style={{ fontSize: '0.75rem', padding: '2px 8px', background: '#f1f5f9', borderRadius: '99px', color: '#64748b' }}>{slot.visitType}</span></td>
-                      <td style={{ padding: '12px' }}>
+                      <td style={{ padding: '16px', fontWeight: 'bold', fontSize: '1.1rem', color: '#0f172a' }}>{slot.startTime}</td>
+                      <td style={{ padding: '16px' }}><span style={{ fontSize: '0.8rem', padding: '4px 12px', background: '#f1f5f9', borderRadius: '99px', color: '#64748b', fontWeight: 'bold' }}>{slot.visitType}</span></td>
+                      <td style={{ padding: '16px' }}>
                         <span style={{
                           background: slot.status === 'booked' ? '#fee2e2' : '#dcfce7',
                           color: slot.status === 'booked' ? '#991b1b' : '#166534',
-                          padding: '4px 10px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 'bold'
+                          padding: '6px 12px', borderRadius: '8px', fontSize: '0.85rem', fontWeight: 'bold'
                         }}>
                           {slot.status === 'booked' ? '予約済' : '空き'}
                         </span>
                       </td>
-                      <td style={{ padding: '12px' }}>
-                        {slot.status === 'booked' && (
+                      <td style={{ padding: '16px' }}>
+                        {slot.status === 'booked' ? (
                           <button
-                            style={{ background: '#ef4444', color: 'white', border: 'none', borderRadius: '6px', padding: '6px 12px', cursor: 'pointer', fontSize: '0.8rem' }}
+                            style={{ background: '#ef4444', color: 'white', border: 'none', borderRadius: '8px', padding: '8px 16px', cursor: 'pointer', fontSize: '0.9rem', fontWeight: 'bold' }}
                             onClick={async () => {
-                              if (!confirm('この予約を取り消しますか？')) return;
+                              if (!confirm('この予約枠を削除(キャンセル)しますか？')) return;
                               setLoading(true);
                               try {
                                 const res = await fetch('/api/cancel', {
@@ -501,17 +535,43 @@ function App() {
                                     date: selectedDate
                                   })
                                 });
-                                if (res.ok) {
-                                  alert('取消しました');
-                                  fetchSlots();
-                                } else {
-                                  alert('取消失敗');
-                                }
+                                if (res.ok) fetchSlots();
+                                else alert('失敗');
                               } catch (e) { alert('Error'); }
                               setLoading(false);
                             }}
                           >
-                            × 取消
+                            × 削除
+                          </button>
+                        ) : (
+                          <button
+                            style={{ background: '#64748b', color: 'white', border: 'none', borderRadius: '8px', padding: '8px 16px', cursor: 'pointer', fontSize: '0.9rem', fontWeight: 'bold' }}
+                            onClick={async () => {
+                              if (!confirm('この枠を「受付終了(×)」にしますか？')) return;
+                              setLoading(true);
+                              try {
+                                // Call booking API with ADMIN_BLOCK name
+                                const res = await fetch('/api/bookings', {
+                                  method: 'POST',
+                                  headers: { 'Content-Type': 'application/json' },
+                                  body: JSON.stringify({
+                                    name: '受付不可',
+                                    phone: '000-0000-0000',
+                                    email: 'admin@system.local',
+                                    visitType: slot.visitType,
+                                    date: selectedDate,
+                                    slotId: slot.slotId,
+                                    startTime: slot.startTime,
+                                    endTime: slot.endTime || '12:00'
+                                  })
+                                });
+                                if (res.ok) fetchSlots();
+                                else alert('失敗');
+                              } catch (e) { alert('Error'); }
+                              setLoading(false);
+                            }}
+                          >
+                            × 停止
                           </button>
                         )}
                       </td>
