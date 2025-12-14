@@ -94,16 +94,18 @@ function App() {
   return (
     <div style={{ maxWidth: '600px', margin: '0 auto', padding: '20px', paddingBottom: '60px' }}>
       <header style={{ textAlign: 'center', marginBottom: '2rem' }}>
+        <img src="/logo.jpg" alt="SCC Logo" style={{ maxWidth: '200px', marginBottom: '1rem' }} />
         <h1 style={{
-          fontSize: '1.5rem',
+          fontSize: '1.4rem',
           color: 'var(--color-primary)',
-          background: 'rgba(255,255,255,0.9)',
-          padding: '1rem',
-          borderRadius: '8px',
-          boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)'
+          background: 'rgba(255,255,255,0.95)',
+          padding: '1.5rem',
+          borderRadius: '16px',
+          boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)',
+          lineHeight: '1.5'
         }}>
           日本体育大学<br />スポーツキュアセンター<br />横浜・健志台接骨院<br />
-          <span style={{ fontSize: '1rem', fontWeight: 'normal', color: '#666' }}>予約管理システム</span>
+          <span style={{ fontSize: '1rem', fontWeight: '500', color: '#64748b', display: 'block', marginTop: '0.5rem' }}>予約管理システム</span>
         </h1>
       </header>
 
@@ -112,33 +114,41 @@ function App() {
         {/* Landing Page with Explanation */}
         {view === 'lp' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-            <div style={{ background: '#fff', padding: '1.5rem', borderRadius: '12px', borderLeft: '5px solid var(--color-primary)' }}>
-              <h3 style={{ marginTop: 0, color: 'var(--color-primary)' }}>ご利用について</h3>
-              <p style={{ lineHeight: '1.6' }}>
-                本システムは、初診・再診の患者様を円滑にご案内するための専用予約システムです。<br />
-                現在継続して治療中の方は、これまで通りの受付方法となります。
+            <div style={{ background: '#fff', padding: '1.5rem', borderRadius: '16px', borderLeft: '6px solid var(--color-primary)', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
+              <h3 style={{ marginTop: 0, color: 'var(--color-primary)', fontSize: '1.1rem' }}>ご利用について</h3>
+              <p style={{ lineHeight: '1.8', margin: 0 }}>
+                本システムは、<span style={{ fontWeight: 'bold' }}>初診・再診の患者様</span>を円滑にご案内するための専用予約システムです。<br /><br />
+                <span style={{ color: 'var(--color-primary)', fontWeight: 'bold', fontSize: '1.1rem', background: '#e0f2fe', padding: '2px 8px', borderRadius: '4px' }}>
+                  現在継続して治療中の方は、これまで通りの受付方法となります。
+                </span>
               </p>
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               <button
                 className="btn-primary"
-                style={{ padding: '1.5rem', textAlign: 'left', display: 'flex', flexDirection: 'column' }}
+                style={{ padding: '1.5rem', textAlign: 'left', display: 'flex', flexDirection: 'column', borderRadius: '16px' }}
                 onClick={() => { setVisitType('初診'); setView('booking'); }}
               >
-                <span style={{ fontSize: '1.2rem', marginBottom: '0.5rem' }}>初診の方はこちら</span>
-                <span style={{ fontSize: '0.9rem', opacity: 0.9, fontWeight: 'normal' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', marginBottom: '0.5rem' }}>
+                  <span style={{ fontSize: '1.3rem', fontWeight: 'bold' }}>初診の方はこちら</span>
+                  <span style={{ background: 'rgba(255,255,255,0.2)', padding: '2px 8px', borderRadius: '999px', fontSize: '0.8rem' }}>First Visit</span>
+                </div>
+                <span style={{ fontSize: '0.9rem', opacity: 0.95, fontWeight: 'normal' }}>
                   ※ 当センターでの治療が初めての方
                 </span>
               </button>
 
               <button
                 className="btn-primary"
-                style={{ background: 'linear-gradient(90deg, #0ea5e9, #0284c7)', padding: '1.5rem', textAlign: 'left', display: 'flex', flexDirection: 'column' }}
+                style={{ background: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)', padding: '1.5rem', textAlign: 'left', display: 'flex', flexDirection: 'column', borderRadius: '16px' }}
                 onClick={() => { setVisitType('再診'); setView('booking'); }}
               >
-                <span style={{ fontSize: '1.2rem', marginBottom: '0.5rem' }}>再診の方はこちら</span>
-                <span style={{ fontSize: '0.9rem', opacity: 0.9, fontWeight: 'normal' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', marginBottom: '0.5rem' }}>
+                  <span style={{ fontSize: '1.3rem', fontWeight: 'bold' }}>再診の方はこちら</span>
+                  <span style={{ background: 'rgba(255,255,255,0.2)', padding: '2px 8px', borderRadius: '999px', fontSize: '0.8rem' }}>Re-Visit</span>
+                </div>
+                <span style={{ fontSize: '0.9rem', opacity: 0.95, fontWeight: 'normal' }}>
                   ※ 前回の来院から1ヶ月以上経過している方<br />
                   ※ 現在治療中の部位とは異なる場所の治療をご希望の方
                 </span>
