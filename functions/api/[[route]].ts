@@ -17,60 +17,77 @@ app.get('/api/slots', async (c) => {
 
 app.post('/api/admin/slots', async (c) => {
     const body = await c.req.json();
-    const { date } = body;
+    const { date, days = 1 } = body; // Support bulk generation
     if (!date) return c.json({ error: 'Date required' }, 400);
 
     const sheets = new SheetsService(c.env);
+    const newSlots: Slot[] = [];
+    const skippedDates: string[] = [];
 
-    // Check if slots already exist
-    const existing = await sheets.getSlots(date);
-    if (existing.length > 0) {
-        return c.json({ error: 'Slots already exist for this date' }, 409);
+    const startDate = new Date(date);
+
+    for (let i = 0; i < days; i++) {
+        const targetDate = new Date(startDate);
+        targetDate.setDate(startDate.getDate() + i);
+        const dateStr = targetDate.toISOString().split('T')[0];
+
+        // Check if slots already exist for this date
+        const existing = await sheets.getSlots(dateStr);
+        if (existing.length > 0) {
+            skippedDates.push(dateStr);
+            continue;
+        }
+
+        // Generate slots
+        const day = targetDate.getDay();
+        const isWeekend = day === 0 || day === 6;
+
+        let startHour = 9;
+        let startMin = 0;
+        let endHour = 20;
+        let endMin = 30;
+
+        if (isWeekend) {
+            startHour = 10;
+            startMin = 0;
+            endHour = 16;
+            endMin = 0;
+        }
+
+        let current = new Date(`${dateStr}T00:00:00`);
+        current.setHours(startHour, startMin, 0, 0);
+
+        const end = new Date(`${dateStr}T00:00:00`);
+        end.setHours(endHour, endMin, 0, 0);
+
+        while (current < end) {
+            const startTime = current.toTimeString().slice(0, 5);
+            current.setMinutes(current.getMinutes() + 15);
+            const endTime = current.toTimeString().slice(0, 5);
+
+            const slot: Slot = {
+                slotId: crypto.randomUUID(),
+                date: dateStr,
+                startTime,
+                endTime,
+                visitType: 'shared',
+                status: 'free'
+            };
+
+            newSlots.push(slot);
+        }
     }
 
-    // Generate slots
-    const targetDate = new Date(date);
-    const day = targetDate.getDay();
-    const isWeekend = day === 0 || day === 6;
-
-    let startHour = 9;
-    let startMin = 0;
-    let endHour = 20;
-    let endMin = 30;
-
-    if (isWeekend) {
-        startHour = 10;
-        startMin = 0;
-        endHour = 16;
-        endMin = 0;
+    if (newSlots.length > 0) {
+        await sheets.createSlots(newSlots);
     }
 
-    const slots: Slot[] = [];
-    let current = new Date(`${date}T00:00:00`);
-    current.setHours(startHour, startMin, 0, 0);
-
-    const end = new Date(`${date}T00:00:00`);
-    end.setHours(endHour, endMin, 0, 0);
-
-    while (current < end) {
-        const startTime = current.toTimeString().slice(0, 5);
-        current.setMinutes(current.getMinutes() + 15);
-        const endTime = current.toTimeString().slice(0, 5);
-
-        const slot: Slot = {
-            slotId: crypto.randomUUID(),
-            date,
-            startTime,
-            endTime,
-            visitType: 'shared',
-            status: 'free'
-        };
-
-        slots.push(slot);
-    }
-
-    await sheets.createSlots(slots);
-    return c.json({ success: true, count: slots.length });
+    return c.json({
+        success: true,
+        count: newSlots.length,
+        generatedDays: days,
+        skippedDates
+    });
 });
 
 app.post('/api/bookings', async (c) => {

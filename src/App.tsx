@@ -102,20 +102,24 @@ function App() {
     setLoading(false);
   };
 
-  const handleAdminGenerateSlots = async () => {
-    if (!confirm(`${selectedDate} の予約枠 (10:00-19:00 / 30分) を生成しますか？`)) return;
+  const handleAdminGenerateSlots = async (days = 1) => {
+    const label = days === 1 ? selectedDate : `${selectedDate} から ${days}日間`;
+    if (!confirm(`${label} の予約枠を生成しますか？\n(既に枠がある日付はスキップされます)`)) return;
+
     setLoading(true);
     try {
       const res = await fetch('/api/admin/slots', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ date: selectedDate })
+        body: JSON.stringify({ date: selectedDate, days })
       });
+      const data = await res.json();
+
       if (res.ok) {
-        alert('生成完了');
+        alert(`生成完了: ${data.count}枠を作成しました。\n(スキップ: ${data.skippedDates?.length || 0}日)`);
         fetchSlots();
       } else {
-        alert('生成失敗');
+        alert(`生成失敗: ${data.message || data.error}`);
       }
     } catch (e) { console.error(e); alert('Error'); }
     setLoading(false);
@@ -494,7 +498,20 @@ function App() {
                 ))}
               </select>
               <button className="btn-primary" onClick={fetchSlots} style={{ padding: '1rem 2rem', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '12px', fontWeight: 'bold' }}>更新</button>
-              <button style={{ padding: '1rem 2rem', background: '#10b981', color: 'white', border: 'none', borderRadius: '12px', marginLeft: 'auto', fontWeight: 'bold', cursor: 'pointer' }} onClick={handleAdminGenerateSlots}>枠自動生成</button>
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '8px' }}>
+                <button onClick={() => handleAdminGenerateSlots(1)} style={{ background: '#3b82f6', color: 'white', border: 'none', borderRadius: '8px', padding: '8px 16px', fontWeight: 'bold', cursor: 'pointer' }}>
+                  + {selectedDate} の枠生成
+                </button>
+                <button onClick={() => handleAdminGenerateSlots(14)} style={{ background: '#0f172a', color: 'white', border: 'none', borderRadius: '8px', padding: '8px 16px', fontWeight: 'bold', cursor: 'pointer' }}>
+                  + 2週間分一括生成
+                </button>
+                <button onClick={() => handleAdminGenerateSlots(30)} style={{ background: '#0f172a', color: 'white', border: 'none', borderRadius: '8px', padding: '8px 16px', fontWeight: 'bold', cursor: 'pointer' }}>
+                  + 1ヶ月分一括生成
+                </button>
+              </div>
+              <p style={{ fontSize: '0.8rem', color: '#64748b', margin: 0 }}>
+                ※ 既に枠がある日付は自動スキップされます。
+              </p>
             </div>
 
             <div style={{ overflowX: 'scroll' }}>
@@ -590,7 +607,8 @@ function App() {
         )}
       </main>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
+
