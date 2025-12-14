@@ -114,4 +114,27 @@ export class SheetsService {
             body: JSON.stringify({ values: [values] }),
         });
     }
+
+    async createSlots(slots: Slot[]) {
+        const token = await this.getToken();
+        const range = 'Slots!A:A';
+        const url = `https://sheets.googleapis.com/v4/spreadsheets/${this.env.SPREADSHEET_ID}/values/${range}:append?valueInputOption=USER_ENTERED`;
+
+        // Map slots to rows
+        const values = slots.map(s => [
+            s.slotId,
+            s.date,
+            s.startTime,
+            s.endTime,
+            s.visitType,
+            s.status,
+            s.reservationId || ''
+        ]);
+
+        await fetch(url, {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ values }),
+        });
+    }
 }
