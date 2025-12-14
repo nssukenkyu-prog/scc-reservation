@@ -33,6 +33,7 @@ export interface Reservation {
     reservationId: string;
     name: string;
     phone: string;
+    email?: string;
     visitType: VisitType;
     date: string;
     startTime: string;

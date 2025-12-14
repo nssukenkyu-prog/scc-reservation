@@ -168,9 +168,9 @@ app.post('/api/bookings', async (c) => {
     }
 
     // 6. Log
-    await sheets.logAction('user', 'book', finalResv);
+    await sheets.logAction('user', 'book', reservation);
 
-    return c.json({ success: true, reservation: finalResv });
+    return c.json({ success: true, reservation });
 });
 
 app.post('/api/cancel', async (c) => {
