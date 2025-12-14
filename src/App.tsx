@@ -524,7 +524,8 @@ function App() {
                       <td style={{ padding: '16px' }}>
                         {slot.status === 'booked' ? (
                           <button
-                            style={{ background: '#ef4444', color: 'white', border: 'none', borderRadius: '8px', padding: '8px 16px', cursor: 'pointer', fontSize: '0.9rem', fontWeight: 'bold' }}
+                            disabled={loading}
+                            style={{ background: loading ? '#94a3b8' : '#ef4444', color: 'white', border: 'none', borderRadius: '8px', padding: '8px 16px', cursor: loading ? 'not-allowed' : 'pointer', fontSize: '0.9rem', fontWeight: 'bold' }}
                             onClick={async () => {
                               if (!confirm('この予約枠を削除(キャンセル)しますか？')) return;
                               setLoading(true);
@@ -548,7 +549,8 @@ function App() {
                           </button>
                         ) : (
                           <button
-                            style={{ background: '#64748b', color: 'white', border: 'none', borderRadius: '8px', padding: '8px 16px', cursor: 'pointer', fontSize: '0.9rem', fontWeight: 'bold' }}
+                            disabled={loading}
+                            style={{ background: loading ? '#94a3b8' : '#64748b', color: 'white', border: 'none', borderRadius: '8px', padding: '8px 16px', cursor: loading ? 'not-allowed' : 'pointer', fontSize: '0.9rem', fontWeight: 'bold' }}
                             onClick={async () => {
                               setLoading(true);
                               try {
@@ -567,7 +569,10 @@ function App() {
                                   })
                                 });
                                 if (res.ok) fetchSlots();
-                                else alert('失敗');
+                                else {
+                                  const dt = await res.json();
+                                  alert('失敗: ' + (dt.error || 'Unknown'));
+                                }
                               } catch (e) { alert('Error'); }
                               setLoading(false);
                             }}
