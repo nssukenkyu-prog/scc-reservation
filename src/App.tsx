@@ -356,7 +356,7 @@ function App() {
                     <input
                       required
                       placeholder="例: 山田 太郎"
-                      style={{ width: '100%', padding: '1.2rem', borderRadius: '16px', border: '2px solid #e2e8f0', fontSize: '1rem', background: '#f8fafc', transition: 'all 0.2s', outline: 'none' }}
+                      style={{ width: '100%', padding: '1.2rem', borderRadius: '16px', border: '2px solid #e2e8f0', fontSize: '1rem', background: '#f8fafc', transition: 'all 0.2s', outline: 'none', boxSizing: 'border-box' }}
                       onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
                       onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
                       value={formData.name}
@@ -368,7 +368,7 @@ function App() {
                     <input
                       required
                       placeholder="例: 090-1234-5678"
-                      style={{ width: '100%', padding: '1.2rem', borderRadius: '16px', border: '2px solid #e2e8f0', fontSize: '1rem', background: '#f8fafc', transition: 'all 0.2s', outline: 'none' }}
+                      style={{ width: '100%', padding: '1.2rem', borderRadius: '16px', border: '2px solid #e2e8f0', fontSize: '1rem', background: '#f8fafc', transition: 'all 0.2s', outline: 'none', boxSizing: 'border-box' }}
                       onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
                       onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
                       value={formData.phone}
@@ -381,7 +381,7 @@ function App() {
                       required
                       type="email"
                       placeholder="example@email.com"
-                      style={{ width: '100%', padding: '1.2rem', borderRadius: '16px', border: '2px solid #e2e8f0', fontSize: '1rem', background: '#f8fafc', transition: 'all 0.2s', outline: 'none' }}
+                      style={{ width: '100%', padding: '1.2rem', borderRadius: '16px', border: '2px solid #e2e8f0', fontSize: '1rem', background: '#f8fafc', transition: 'all 0.2s', outline: 'none', boxSizing: 'border-box' }}
                       onFocus={(e) => e.target.style.borderColor = '#3b82f6'}
                       onBlur={(e) => e.target.style.borderColor = '#e2e8f0'}
                       value={formData.email}
