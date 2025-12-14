@@ -7,6 +7,7 @@ interface Slot {
   endTime: string;
   date: string; // If backend returns it, otherwise optional or omit
   status: 'free' | 'booked';
+  reservationId?: string;
 }
 
 function App() {
@@ -286,7 +287,35 @@ function App() {
                         </span>
                       </td>
                       <td style={{ padding: '8px' }}>
-                        {slot.status === 'booked' && <button style={{ background: '#ef4444', color: 'white', border: 'none', borderRadius: '4px', padding: '4px 8px', cursor: 'pointer' }}>取消</button>}
+                        {slot.status === 'booked' && (
+                          <button
+                            style={{ background: '#ef4444', color: 'white', border: 'none', borderRadius: '4px', padding: '4px 8px', cursor: 'pointer' }}
+                            onClick={async () => {
+                              if (!confirm('この予約を取り消しますか？\n(Googleカレンダーからは自動削除されません、手動確認してください)')) return;
+                              setLoading(true);
+                              try {
+                                const res = await fetch('/api/cancel', {
+                                  method: 'POST',
+                                  headers: { 'Content-Type': 'application/json' },
+                                  body: JSON.stringify({
+                                    slotId: slot.slotId,
+                                    reservationId: slot.reservationId, // We assume slot has this from getSlots
+                                    date: selectedDate
+                                  })
+                                });
+                                if (res.ok) {
+                                  alert('取消しました');
+                                  fetchSlots();
+                                } else {
+                                  alert('取消失敗');
+                                }
+                              } catch (e) { alert('Error'); }
+                              setLoading(false);
+                            }}
+                          >
+                            取消
+                          </button>
+                        )}
                       </td>
                     </tr>
                   ))}

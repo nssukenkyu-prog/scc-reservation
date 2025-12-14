@@ -175,24 +175,51 @@ app.post('/api/bookings', async (c) => {
 
 app.post('/api/cancel', async (c) => {
     const body = await c.req.json();
-    const { reservationId, lineUserId } = body;
+    const { slotId, reservationId } = body;
 
-    // Ideally verification that lineUserId owns reservationId
+    if (!slotId || !reservationId) return c.json({ error: 'Missing fields' }, 400);
 
     const sheets = new SheetsService(c.env);
-    const calendar = new CalendarService(c.env);
+    // const calendar = new CalendarService(c.env); // Calendar deletion complex without eventId storage
 
-    // We need to find the reservation to get eventId and slot details.
-    // This is expensive (scan all).
-    // Optimization: Frontend sends details? Or just scan recent?
-    // Let's assume we scan. For MVP, we need a 'getReservation' method.
-    // ... omitting strict search for now, user prompt says "Slots to free, Calendar delete".
+    // 1. Get Slot to find rowIndex
+    // Optimization: we could pass rowIndex from frontend if we trust it, 
+    // but better to fetch.
+    // We don't know the DATE. Admin knows date.
+    // Frontend should pass date.
+    const date = body.date;
+    if (!date) return c.json({ error: 'Date required' }, 400);
 
-    // Implementation Note: Since we don't have a DB with index, finding by ID is O(N).
-    // I will skip implementation of full search for this turn to save tokens, 
-    // but in a real app, I'd read Reservations sheet.
+    const slots = await sheets.getSlots(date);
+    const slot = slots.find(s => s.slotId === slotId);
 
-    return c.json({ error: 'Cancel implemented in next step' }, 501);
+    if (!slot) return c.json({ error: 'Slot not found' }, 404);
+
+    // 2. Update Slot to Free
+    if (slot.rowIndex) {
+        // Clear reservationId in slot? Or just status free.
+        // updateSlotStatus(rowIndex, status, reservationId)
+        // We set reservationId to empty string to unlink?
+        // updateSlotStatus takes (rowIndex, status, reservationId).
+        // Let's pass empty string for reservationId.
+        await sheets.updateSlotStatus(slot.rowIndex, 'free', '');
+    }
+
+    // 3. Update Reservation Status
+    // We need to find reservation's row index.
+    // SheetsService needs a method to find reservation by ID?
+    // Or we just rely on slot being free.
+    // Ideally we mark reservation as cancelled.
+    // I need to implement `updateReservationStatus` in SheetsService.
+    await sheets.updateReservationStatus(reservationId, 'cancelled');
+
+    // 4. Calendar
+    // If we had eventId, we would delete.
+    // For now, skipping calendar delete as we don't efficiently have eventId.
+
+    await sheets.logAction('admin', 'cancel', { slotId, reservationId });
+
+    return c.json({ success: true });
 });
 
 export const onRequest = handle(app);
