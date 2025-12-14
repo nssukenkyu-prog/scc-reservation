@@ -1,9 +1,11 @@
-import { useState, useEffect, FormEvent } from 'react'
+import { useState, useEffect, type FormEvent } from 'react'
 
 type VisitType = '初診' | '再診';
 interface Slot {
   slotId: string;
   startTime: string;
+  endTime: string;
+  date: string; // If backend returns it, otherwise optional or omit
   status: 'free' | 'booked';
 }
 
@@ -13,7 +15,7 @@ function App() {
   const [selectedDate, setSelectedDate] = useState<string>(new Date().toISOString().split('T')[0]);
   const [slots, setSlots] = useState<Slot[]>([]);
   const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null);
-  const [formData, setFormData] = useState({ name: '', phone: '' });
+  const [formData, setFormData] = useState({ name: '', phone: '', email: '' });
   const [loading, setLoading] = useState(false);
 
   // Check for admin flag
@@ -47,18 +49,19 @@ function App() {
   }, [view, selectedDate]);
 
   const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
     setLoading(true);
     try {
       const res = await fetch('/api/bookings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          ...formData,
+          ...formData, // includes name, phone, email
           visitType,
           date: selectedDate,
           slotId: selectedSlot?.slotId,
           startTime: selectedSlot?.startTime,
-          endTime: '12:00' // mock
+          endTime: selectedSlot?.endTime || '12:00'
         })
       });
       if (res.ok) {
@@ -223,6 +226,13 @@ function App() {
                     value={formData.phone}
                     onChange={e => setFormData({ ...formData, phone: e.target.value })}
                   />
+                  <input
+                    type="email"
+                    placeholder="メールアドレス (予約完了メールをお送りします)"
+                    style={{ padding: '1rem', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '1rem' }}
+                    value={formData.email}
+                    onChange={e => setFormData({ ...formData, email: e.target.value })}
+                  />
                   <button className="btn-primary" style={{ width: '100%', marginTop: '1rem' }} onClick={handleSubmit}>予約を確定する</button>
                 </div>
               </div>
@@ -235,7 +245,7 @@ function App() {
             <div style={{ fontSize: '4rem', marginBottom: '1rem' }}>✅</div>
             <h2 style={{ color: 'var(--color-primary)' }}>予約が完了しました</h2>
             <p>ご入力いただいた内容で予約を承りました。<br />当日はお気をつけてお越しください。</p>
-            <button className="btn-primary" onClick={() => { setView('lp'); setSelectedSlot(null); setFormData({ name: '', phone: '' }); }}>TOPへ戻る</button>
+            <button className="btn-primary" onClick={() => { setView('lp'); setSelectedSlot(null); setFormData({ name: '', phone: '', email: '' }); }}>TOPへ戻る</button>
           </div>
         )}
 
@@ -287,9 +297,25 @@ function App() {
         )}
       </main>
 
-      <footer style={{ textAlign: 'center', marginTop: '3rem', color: '#64748b', fontSize: '0.8rem', paddingBottom: '1rem' }}>
-        <p style={{ letterSpacing: '0.05em', fontWeight: '500' }}>
-          Nippon Sport Science University Sport Cure Center
+      <footer style={{ marginTop: '4rem', textAlign: 'center', color: '#64748b', fontSize: '0.9rem', lineHeight: '1.8' }}>
+        <div style={{ background: '#f8fafc', padding: '2rem', borderRadius: '16px', marginBottom: '1rem' }}>
+          <h4 style={{ margin: '0 0 1rem 0', color: '#334155', fontSize: '1rem' }}>お問い合わせ先</h4>
+          <p style={{ margin: 0, fontWeight: 'bold' }}>日本体育大学<br />スポーツキュアセンター横浜・健志台接骨院</p>
+          <p style={{ margin: '0.5rem 0' }}>
+            TEL：<a href="tel:0454796262" style={{ color: 'inherit', textDecoration: 'none' }}>045-479-6262</a><br />
+            FAX：045-479-5353
+          </p>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '1.5rem', marginTop: '1rem' }}>
+            <a href="https://page.line.me/187qiivk?oat_content=url&openQrModal=true" target="_blank" rel="noreferrer" style={{ color: '#00b900', fontWeight: 'bold', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+              <span style={{ fontSize: '1.2rem' }}>LINE</span> 公式アカウント
+            </a>
+            <a href="https://www.instagram.com/nssu_sport_cure_center/?igshid=YTQwZjQ0NmI0OA%3D%3D&utm_source=qr" target="_blank" rel="noreferrer" style={{ color: '#E1306C', fontWeight: 'bold', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+              <span style={{ fontSize: '1.2rem' }}>Instagram</span>
+            </a>
+          </div>
+        </div>
+        <p style={{ letterSpacing: '0.05em', fontWeight: '500', opacity: 0.8 }}>
+          &copy; 2025 Nippon Sport Science University Sport Cure Center
         </p>
       </footer>
     </div>
