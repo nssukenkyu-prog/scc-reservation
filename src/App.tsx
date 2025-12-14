@@ -47,7 +47,7 @@ function App() {
   const fetchSlots = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/slots?date=${selectedDate}`);
+      const res = await fetch(`/api/slots?date=${selectedDate}&t=${Date.now()}`);
       if (!res.ok) throw new Error('API Error');
       const data = await res.json();
       setSlots(data);
