@@ -343,7 +343,6 @@ function App() {
                 borderRadius: '32px',
                 boxShadow: '0 25px 50px -12px rgba(0,0,0,0.1)',
                 border: '1px solid rgba(255,255,255,0.8)',
-                maxWidth: '500px', // Prevent too wide
                 margin: '2rem auto'
               }}>
                 <h3 style={{ marginTop: 0, fontSize: '1.4rem', color: '#0f172a', marginBottom: '2rem', textAlign: 'center' }}>情報をご入力ください。</h3>
@@ -547,10 +546,8 @@ function App() {
                           <button
                             style={{ background: '#64748b', color: 'white', border: 'none', borderRadius: '8px', padding: '8px 16px', cursor: 'pointer', fontSize: '0.9rem', fontWeight: 'bold' }}
                             onClick={async () => {
-                              if (!confirm('この枠を「受付終了(×)」にしますか？')) return;
                               setLoading(true);
                               try {
-                                // Call booking API with ADMIN_BLOCK name
                                 const res = await fetch('/api/bookings', {
                                   method: 'POST',
                                   headers: { 'Content-Type': 'application/json' },
@@ -571,7 +568,7 @@ function App() {
                               setLoading(false);
                             }}
                           >
-                            × 停止
+                            × 枠削除
                           </button>
                         )}
                       </td>
