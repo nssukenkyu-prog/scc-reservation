@@ -138,4 +138,28 @@ export class SheetsService {
             body: JSON.stringify({ values }),
         });
     }
+    async updateReservationStatus(reservationId: string, status: 'cancelled') {
+        const token = await this.getToken();
+        // MVP: Simple scan
+        const range = 'Reservations!A:J';
+        const url = `https://sheets.googleapis.com/v4/spreadsheets/${this.env.SPREADSHEET_ID}/values/${range}`;
+
+        const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
+        const data = await res.json() as { values: string[][] };
+        if (!data.values) return;
+
+        const rowIndex = data.values.findIndex(row => row[0] === reservationId);
+        if (rowIndex === -1) return;
+
+        const sheetRow = rowIndex + 1;
+        // Status is 10th column (J)
+        const updateRange = `Reservations!J${sheetRow}`;
+        const updateUrl = `https://sheets.googleapis.com/v4/spreadsheets/${this.env.SPREADSHEET_ID}/values/${updateRange}?valueInputOption=USER_ENTERED`;
+
+        await fetch(updateUrl, {
+            method: 'PUT',
+            headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ values: [[status]] })
+        });
+    }
 }

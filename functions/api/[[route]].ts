@@ -69,7 +69,7 @@ app.get('/api/slots', async (c) => {
     const sheets = new SheetsService(c.env);
     await sheets.createSlots(slots);
 
-    return c.json({ success: true, count: slots.length, isWeekend });
+    return c.json(slots);
 });
 
 app.post('/api/bookings', async (c) => {
