@@ -5,8 +5,9 @@ interface Slot {
   slotId: string;
   startTime: string;
   endTime: string;
-  date: string; // If backend returns it, otherwise optional or omit
+  date: string;
   status: 'free' | 'booked';
+  visitType: VisitType; // Added
   reservationId?: string;
 }
 
@@ -30,7 +31,6 @@ function App() {
   const fetchSlots = async () => {
     setLoading(true);
     try {
-      // Demo Mode fallback if API fails (for preview)
       const res = await fetch(`/api/slots?date=${selectedDate}`);
       if (!res.ok) throw new Error('API Error');
       const data = await res.json();
@@ -57,7 +57,7 @@ function App() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          ...formData, // includes name, phone, email
+          ...formData,
           visitType,
           date: selectedDate,
           slotId: selectedSlot?.slotId,
@@ -95,10 +95,36 @@ function App() {
     setLoading(false);
   };
 
+  // Logic to filter slots
+  const filteredSlots = slots.filter(slot => {
+    // 1. Filter by Visit Type
+    if (view === 'booking' && slot.visitType !== visitType) return false;
+
+    // 2. Filter by Time (Realtime restriction: > 15 mins from now)
+    const now = new Date();
+    // Check if selectedDate is today
+    const selected = new Date(selectedDate);
+    const isToday = selected.toDateString() === now.toDateString();
+
+    if (isToday) {
+      const [hours, minutes] = slot.startTime.split(':').map(Number);
+      const slotTime = new Date(now);
+      slotTime.setHours(hours, minutes, 0, 0);
+
+      const diffMinutes = (slotTime.getTime() - now.getTime()) / (1000 * 60);
+      return diffMinutes >= 15;
+    }
+    // If past date? Already filtered by API usually, but let's assume we allow future only.
+    if (selected < new Date(new Date().toDateString())) return false; // Past dates
+
+    return true;
+  });
+
   return (
     <div style={{ maxWidth: '600px', margin: '0 auto', padding: '20px', paddingBottom: '100px' }}>
       <header style={{ textAlign: 'center', marginBottom: '2rem' }}>
-        <img src="/logo.jpg" alt="SCC Logo" style={{ maxWidth: '200px', marginBottom: '1rem', display: 'block', margin: '0 auto 1rem auto' }} />
+        {/* ①ロゴ画像を大きく (maxWidth: 200px -> 280px) */}
+        <img src="/logo.jpg" alt="SCC Logo" style={{ maxWidth: '280px', marginBottom: '1rem', display: 'block', margin: '0 auto 1rem auto' }} />
         <h1 style={{
           fontSize: '1.4rem',
           color: 'var(--color-primary)',
@@ -109,7 +135,8 @@ function App() {
           lineHeight: '1.5'
         }}>
           日本体育大学<br />スポーツキュアセンター<br />横浜・健志台接骨院<br />
-          <span style={{ fontSize: '1rem', fontWeight: '500', color: '#64748b', display: 'block', marginTop: '0.5rem' }}>予約管理システム</span>
+          {/* ②タイトル変更 */}
+          <span style={{ fontSize: '1.1rem', fontWeight: 'bold', color: '#64748b', display: 'block', marginTop: '0.5rem' }}>初診・再診専用 予約ページ</span>
         </h1>
       </header>
 
@@ -121,10 +148,12 @@ function App() {
             <div style={{ background: '#fff', padding: '1.5rem', borderRadius: '16px', borderLeft: '6px solid var(--color-primary)', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
               <h3 style={{ marginTop: 0, color: 'var(--color-primary)', fontSize: '1.1rem' }}>ご利用について</h3>
               <p style={{ lineHeight: '1.8', margin: 0 }}>
-                本システムは、<span style={{ fontWeight: 'bold' }}>初診・再診の患者様</span>を円滑にご案内するための専用予約システムです。<br /><br />
-                <span style={{ color: 'var(--color-primary)', fontWeight: 'bold', fontSize: '1.1rem', background: '#e0f2fe', padding: '2px 8px', borderRadius: '4px' }}>
-                  現在継続して治療中の方は、これまで通りの受付方法となります。
+                本システムは、<span style={{ fontWeight: 'bold' }}>初診・再診の患者様</span>を円滑にご案内するための専用予約ページです。<br /><br />
+                {/* ③文言変更 */}
+                <span style={{ color: '#ef4444', fontWeight: 'bold', fontSize: '1rem', background: '#fee2e2', padding: '4px 8px', borderRadius: '4px', display: 'inline-block' }}>
+                  現在継続して治療中の方は、本システムからの予約は承っておりません。
                 </span>
+                <br /><span style={{ fontSize: '0.9rem', color: '#666' }}>窓口またはお電話にてご予約ください。</span>
               </p>
             </div>
 
@@ -139,7 +168,8 @@ function App() {
                   <span style={{ background: 'rgba(255,255,255,0.2)', padding: '2px 8px', borderRadius: '999px', fontSize: '0.8rem' }}>First Visit</span>
                 </div>
                 <span style={{ fontSize: '0.9rem', opacity: 0.95, fontWeight: 'normal' }}>
-                  ※ 当センターでの治療が初めての方
+                  {/* ④当院に変更 */}
+                  ※ 当院での治療が初めての方
                 </span>
               </button>
 
@@ -162,35 +192,59 @@ function App() {
         )}
 
         {view === 'home' && (
-          /* Deprecated view, redirect to lp or remove logic. Keeping for safety if needed but 'lp' replaces it. */
           <div />
         )}
 
         {view === 'booking' && (
           <div>
             <button onClick={() => setView('lp')} style={{ marginBottom: '1rem', background: 'transparent', border: 'none', cursor: 'pointer', color: 'var(--color-primary)' }}>← 戻る</button>
-            <h2 style={{ borderBottom: '2px solid var(--color-primary)', paddingBottom: '0.5rem' }}>{visitType} 予約</h2>
+            <h2 style={{ borderBottom: '2px solid var(--color-primary)', paddingBottom: '0.5rem', marginBottom: '1.5rem' }}>{visitType} 予約</h2>
 
-            <div style={{ marginBottom: '1.5rem' }}>
-              <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>日付を選択してください</label>
+            {/* ⑤初診・再診の説明をここにも表示 */}
+            <div style={{ background: '#f8fafc', padding: '1rem', borderRadius: '8px', marginBottom: '1.5rem', fontSize: '0.9rem', color: '#475569' }}>
+              {visitType === '初診' ? (
+                <p style={{ margin: 0 }}><strong>【初診】</strong>当院での治療が初めての方が対象です。<br />問診・検査等にお時間を頂くため、余裕を持ってお越しください。</p>
+              ) : (
+                <p style={{ margin: 0 }}><strong>【再診】</strong>前回の来院から1ヶ月以上経過している方、または新しい部位の治療をご希望の方が対象です。</p>
+              )}
+            </div>
+
+            <div style={{ marginBottom: '2rem' }}>
+              <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>日付を選択</label>
+              {/* ⑦日付選択のカード修正: padding/margin調整 */}
               <input
                 type="date"
                 value={selectedDate}
                 min={new Date().toISOString().split('T')[0]}
                 onChange={(e) => setSelectedDate(e.target.value)}
-                style={{ padding: '0.8rem', borderRadius: '8px', border: '1px solid #cbd5e1', width: '100%', fontSize: '1rem' }}
+                style={{
+                  padding: '0.8rem',
+                  borderRadius: '12px',
+                  border: '2px solid #e2e8f0',
+                  width: '100%',
+                  fontSize: '1.1rem',
+                  background: '#fff',
+                  boxSizing: 'border-box'
+                }}
               />
             </div>
 
             {loading ? <div className="shimmer" style={{ height: '100px', borderRadius: '8px' }}></div> : (
               <div>
-                {slots.length === 0 ? (
+                {/* ⑥時間の選択をわかりやすくするための見出し */}
+                <h3 style={{ fontSize: '1rem', color: '#64748b', marginBottom: '0.5rem' }}>予約可能な時間 ({filteredSlots.length}件)</h3>
+
+                {filteredSlots.length === 0 ? (
                   <div style={{ padding: '2rem', textAlign: 'center', color: '#64748b', background: 'rgba(255,255,255,0.5)', borderRadius: '8px' }}>
-                    予約可能な枠がありません。<br />別の日付を選択するか、お電話にてお問い合わせください。
+                    予約可能な枠がありません。<br />
+                    {/* ⑧補足 */}
+                    <small>※直近15分以内の枠は表示されません。</small><br />
+                    別の日付を選択するか、お電話にてお問い合わせください。
                   </div>
                 ) : (
                   <div className="slot-grid">
-                    {slots.map(slot => (
+                    {/* ⑨予約済みは×と示す (status='booked' なら ×) */}
+                    {filteredSlots.map(slot => (
                       <div
                         key={slot.slotId}
                         className={`slot-item ${slot.status === 'booked' ? 'booked' : ''}`}
@@ -198,12 +252,14 @@ function App() {
                         style={{
                           borderColor: selectedSlot?.slotId === slot.slotId ? 'var(--color-primary)' : 'transparent',
                           background: selectedSlot?.slotId === slot.slotId ? '#e0f2fe' : undefined,
-                          fontWeight: selectedSlot?.slotId === slot.slotId ? 'bold' : 'normal'
+                          fontWeight: selectedSlot?.slotId === slot.slotId ? 'bold' : 'normal',
+                          // ⑥同じ時間が2つ... は filteredSlots で解消済み
                         }}
                       >
-                        {slot.startTime}
-                        <br />
-                        {slot.status === 'free' ? '◎' : '×'}
+                        <div style={{ fontSize: '1.2rem' }}>{slot.startTime}</div>
+                        <div style={{ fontSize: '0.8rem', marginTop: '0.2rem' }}>
+                          {slot.status === 'free' ? <span style={{ color: 'green' }}>◎ 予約可</span> : <span style={{ color: 'red' }}>× 受付終了</span>}
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -212,8 +268,12 @@ function App() {
             )}
 
             {selectedSlot && (
-              <div style={{ marginTop: '2rem', animation: 'fadeIn 0.3s ease-in' }}>
-                <h3>予約情報の入力</h3>
+              <div style={{ marginTop: '2rem', animation: 'fadeIn 0.3s ease-in', background: '#fff', padding: '1.5rem', borderRadius: '16px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }}>
+                <h3 style={{ borderBottom: '1px solid #eee', paddingBottom: '0.5rem' }}>予約確定へ</h3>
+                <p style={{ marginBottom: '1.5rem' }}>
+                  <strong>日時:</strong> {selectedDate} {selectedSlot.startTime}<br />
+                  <strong>区分:</strong> {visitType}
+                </p>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                   <input
                     placeholder="お名前 (例: 山田 太郎)"
@@ -265,18 +325,21 @@ function App() {
 
             <div style={{ background: 'white', borderRadius: '8px', padding: '1rem', overflowX: 'scroll' }}>
               <h3>本日の予約状況 ({selectedDate})</h3>
+              {/* Admin shows ALL slots, maybe filter by type too? No, admin sees all. */}
               <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '400px' }}>
                 <thead>
                   <tr style={{ background: '#f0f0f0' }}>
                     <th style={{ padding: '8px', textAlign: 'left' }}>時間</th>
+                    <th style={{ padding: '8px', textAlign: 'left' }}>種別</th>{/* Added Type column for Admin */}
                     <th style={{ padding: '8px', textAlign: 'left' }}>状態</th>
                     <th style={{ padding: '8px', textAlign: 'left' }}>操作</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {slots.length === 0 ? <tr><td colSpan={4} style={{ padding: '8px' }}>データなし (自動生成ボタンで作成できます)</td></tr> : slots.map(slot => (
+                  {slots.length === 0 ? <tr><td colSpan={5} style={{ padding: '8px' }}>データなし (自動生成ボタンで作成できます)</td></tr> : slots.map(slot => (
                     <tr key={slot.slotId} style={{ borderBottom: '1px solid #eee' }}>
                       <td style={{ padding: '8px' }}>{slot.startTime}</td>
+                      <td style={{ padding: '8px' }}><span style={{ fontSize: '0.8rem', padding: '2px 4px', background: '#f1f5f9', borderRadius: '4px' }}>{slot.visitType}</span></td>
                       <td style={{ padding: '8px' }}>
                         <span style={{
                           background: slot.status === 'booked' ? '#fee2e2' : '#dcfce7',
@@ -299,7 +362,7 @@ function App() {
                                   headers: { 'Content-Type': 'application/json' },
                                   body: JSON.stringify({
                                     slotId: slot.slotId,
-                                    reservationId: slot.reservationId, // We assume slot has this from getSlots
+                                    reservationId: slot.reservationId,
                                     date: selectedDate
                                   })
                                 });
