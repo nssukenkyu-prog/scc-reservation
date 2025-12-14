@@ -1,0 +1,70 @@
+import { getAccessToken } from '../utils/google';
+import { Env, Reservation } from '../types';
+
+const SCOPES = ['https://www.googleapis.com/auth/calendar'];
+
+export class CalendarService {
+    private env: Env;
+
+    constructor(env: Env) {
+        this.env = env;
+    }
+
+    private async getToken() {
+        return getAccessToken(
+            {
+                client_email: this.env.GOOGLE_CLIENT_EMAIL,
+                private_key: this.env.GOOGLE_PRIVATE_KEY,
+                project_id: this.env.GOOGLE_PROJECT_ID,
+            },
+            SCOPES
+        );
+    }
+
+    async createEvent(resv: Reservation): Promise<string | null> {
+        const token = await this.getToken();
+        const calendarId = this.env.CALENDAR_ID;
+
+        // Format Date: YYYY-MM-DDTHH:mm:00+09:00
+        const startDateTime = `${resv.date}T${resv.startTime}:00+09:00`;
+        const endDateTime = `${resv.date}T${resv.endTime}:00+09:00`;
+
+        const event = {
+            summary: `【${resv.visitType}】${resv.name} 様`,
+            description: `電話番号: ${resv.phone}\n来院区分: ${resv.visitType}\n予約ID: ${resv.reservationId}`,
+            start: { dateTime: startDateTime },
+            end: { dateTime: endDateTime },
+        };
+
+        const url = `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events`;
+
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(event),
+        });
+
+        if (!response.ok) {
+            const err = await response.text();
+            console.error('Calendar Create Error:', err);
+            return null;
+        }
+
+        const data = await response.json() as { id: string };
+        return data.id;
+    }
+
+    async deleteEvent(eventId: string) {
+        const token = await this.getToken();
+        const calendarId = this.env.CALENDAR_ID;
+        const url = `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events/${eventId}`;
+
+        await fetch(url, {
+            method: 'DELETE',
+            headers: { Authorization: `Bearer ${token}` },
+        });
+    }
+}
