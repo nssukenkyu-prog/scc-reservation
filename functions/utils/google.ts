@@ -59,11 +59,13 @@ function b64url(input: string | Uint8Array): string {
 }
 
 async function importPrivateKey(pem: string): Promise<CryptoKey> {
+  // Remove headers and strictly keep only base64 characters
   const customPem = pem
     .replace('-----BEGIN PRIVATE KEY-----', '')
     .replace('-----END PRIVATE KEY-----', '')
-    .replace(/\s/g, '');
-    
+    .replace(/\\n/g, '') // Handle literal \n characters
+    .replace(/\s/g, ''); // Handle actual whitespace
+
   const binaryDerString = atob(customPem);
   const binaryDer = new Uint8Array(binaryDerString.length);
   for (let i = 0; i < binaryDerString.length; i++) {
