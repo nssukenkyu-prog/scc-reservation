@@ -155,10 +155,10 @@ function App() {
           border: '1px solid rgba(255,255,255,0.5)'
         }}>
           <h1 style={{ margin: 0, fontSize: '1.2rem', color: '#1e293b', letterSpacing: '0.05em' }}>
-            日本体育大学<br />スポーツキュアセンター<br />横浜・健志台接骨院
+            SCC 初診・再診専用予約フォーム
           </h1>
           <div style={{ width: '40px', height: '4px', background: 'linear-gradient(90deg, #0284c7, #38bdf8)', margin: '1rem auto', borderRadius: '2px' }}></div>
-          <p style={{ margin: 0, fontSize: '1.1rem', fontWeight: 'bold', color: '#0f172a' }}>初診・再診専用 予約ページ</p>
+          <p style={{ margin: 0, fontSize: '1.1rem', fontWeight: 'bold', color: '#0f172a' }}>日本体育大学 スポーツキュアセンター<br />横浜・健志台接骨院</p>
         </div>
       </header>
 
