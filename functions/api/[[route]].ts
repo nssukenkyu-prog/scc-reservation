@@ -10,13 +10,27 @@ app.get('/api/slots', async (c) => {
     const date = c.req.query('date');
     if (!date) return c.json({ error: 'Date required' }, 400);
 
-    // Generate slots based on day of week
-    // Weekday (Mon-Fri): 09:00 - 20:30
-    // Weekend (Sat-Sun): 10:00 - 16:00
-    // Interval: 15 min
+    const sheets = new SheetsService(c.env);
+    const slots = await sheets.getSlots(date);
+    return c.json(slots);
+});
 
+app.post('/api/admin/slots', async (c) => {
+    const body = await c.req.json();
+    const { date } = body;
+    if (!date) return c.json({ error: 'Date required' }, 400);
+
+    const sheets = new SheetsService(c.env);
+
+    // Check if slots already exist
+    const existing = await sheets.getSlots(date);
+    if (existing.length > 0) {
+        return c.json({ error: 'Slots already exist for this date' }, 409);
+    }
+
+    // Generate slots
     const targetDate = new Date(date);
-    const day = targetDate.getDay(); // 0:Sun, 1:Mon... 6:Sat
+    const day = targetDate.getDay();
     const isWeekend = day === 0 || day === 6;
 
     let startHour = 9;
@@ -38,29 +52,25 @@ app.get('/api/slots', async (c) => {
     const end = new Date(`${date}T00:00:00`);
     end.setHours(endHour, endMin, 0, 0);
 
-    // Interval 15 min
     while (current < end) {
         const startTime = current.toTimeString().slice(0, 5);
         current.setMinutes(current.getMinutes() + 15);
         const endTime = current.toTimeString().slice(0, 5);
 
-        // Create SHARED slot for both '初診' and '再診'
         const slot: Slot = {
             slotId: crypto.randomUUID(),
             date,
             startTime,
             endTime,
-            visitType: 'shared', // Indicates it can be used by either
+            visitType: 'shared',
             status: 'free'
         };
 
         slots.push(slot);
     }
 
-    const sheets = new SheetsService(c.env);
     await sheets.createSlots(slots);
-
-    return c.json(slots);
+    return c.json({ success: true, count: slots.length });
 });
 
 app.post('/api/bookings', async (c) => {
