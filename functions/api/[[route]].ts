@@ -162,18 +162,27 @@ app.post('/api/bookings', async (c) => {
 
     // 4. Create Calendar Event
     let eventId = '';
-    try {
-        const calendarId = await calendar.createEvent(reservation); // reservation includes email now
-        if (calendarId) eventId = calendarId;
-    } catch (e) {
-        console.error('Calendar Error', e);
-        await sheets.logAction('system', 'calendar_error', { error: String(e), reservationId });
+    // If it's an Admin Block (name === '受付不可'), SKIP Calendar and Email
+    if (name === '受付不可') {
+        // Clear email so GAS doesn't send anything
+        reservation.email = '';
+        // Skip Calendar creation
+        console.log('[BOOKING] Admin Block: Skipping Calendar and Email');
+    } else {
+        try {
+            const calendarId = await calendar.createEvent(reservation);
+            if (calendarId) eventId = calendarId;
+        } catch (e) {
+            console.error('Calendar Error', e);
+            await sheets.logAction('system', 'calendar_error', { error: String(e), reservationId });
+        }
     }
 
     // 5. Send Email (Mock/Log)
-    if (email) {
-        console.log(`[EMAIL] Sending confirmation to ${email}`);
-        await sheets.logAction('system', 'email_sent', { reservationId, email });
+    // Note: Actual email is sent by GAS trigger on Google Sheets
+    if (reservation.email) {
+        console.log(`[EMAIL] Reservation recorded for ${reservation.email}`);
+        await sheets.logAction('system', 'reservation_recorded', { reservationId, email: reservation.email });
     }
 
     // 6. Log
