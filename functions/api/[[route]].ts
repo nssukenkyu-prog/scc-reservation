@@ -62,7 +62,7 @@ app.post('/api/admin/slots', async (c) => {
 
         while (current < end) {
             const startTime = current.toTimeString().slice(0, 5);
-            current.setMinutes(current.getMinutes() + 15);
+            current.setMinutes(current.getMinutes() + 30);
             const endTime = current.toTimeString().slice(0, 5);
 
             const slot: Slot = {
@@ -163,25 +163,16 @@ app.post('/api/bookings', async (c) => {
     // 4. Create Calendar Event
     let eventId = '';
     try {
-        const calendarId = await calendar.createEvent(reservation);
+        const calendarId = await calendar.createEvent(reservation); // reservation includes email now
         if (calendarId) eventId = calendarId;
-        // We might want to save eventId to reservation, but row is already written.
-        // We could update it. For now detailed log.
-        // Ideally createReservation matches return type or we allow mutation.
-        // Let's ignore updating eventId in sheet for MVP to save latency/complexity or update later.
     } catch (e) {
         console.error('Calendar Error', e);
-        // Rollback? For now, just log error, but proceed.
         await sheets.logAction('system', 'calendar_error', { error: String(e), reservationId });
     }
 
     // 5. Send Email (Mock/Log)
     if (email) {
         console.log(`[EMAIL] Sending confirmation to ${email}`);
-        console.log(`[EMAIL] Subject: 【予約確定】スポーツキュアセンター横浜・健志台接骨院`);
-        console.log(`[EMAIL] Body: ${name}様 ... ${date} ${slot.startTime}...`);
-        // Integration with Resend would go here.
-        // await sendEmail(email, ...);
         await sheets.logAction('system', 'email_sent', { reservationId, email });
     }
 
@@ -198,13 +189,8 @@ app.post('/api/cancel', async (c) => {
     if (!slotId || !reservationId) return c.json({ error: 'Missing fields' }, 400);
 
     const sheets = new SheetsService(c.env);
-    // const calendar = new CalendarService(c.env); // Calendar deletion complex without eventId storage
 
     // 1. Get Slot to find rowIndex
-    // Optimization: we could pass rowIndex from frontend if we trust it, 
-    // but better to fetch.
-    // We don't know the DATE. Admin knows date.
-    // Frontend should pass date.
     const date = body.date;
     if (!date) return c.json({ error: 'Date required' }, 400);
 
@@ -215,25 +201,20 @@ app.post('/api/cancel', async (c) => {
 
     // 2. Update Slot to Free
     if (slot.rowIndex) {
-        // Clear reservationId in slot? Or just status free.
-        // updateSlotStatus(rowIndex, status, reservationId)
-        // We set reservationId to empty string to unlink?
-        // updateSlotStatus takes (rowIndex, status, reservationId).
-        // Let's pass empty string for reservationId.
         await sheets.updateSlotStatus(slot.rowIndex, 'free', '');
     }
 
     // 3. Update Reservation Status
-    // We need to find reservation's row index.
-    // SheetsService needs a method to find reservation by ID?
-    // Or we just rely on slot being free.
-    // Ideally we mark reservation as cancelled.
-    // I need to implement `updateReservationStatus` in SheetsService.
     await sheets.updateReservationStatus(reservationId, 'cancelled');
 
-    // 4. Calendar
-    // If we had eventId, we would delete.
-    // For now, skipping calendar delete as we don't efficiently have eventId.
+    // 4. Calendar - Delete Event without sending updates
+    // Fetch reservation to get googleEventId
+    const reservation = await sheets.getReservation(reservationId);
+    if (reservation && reservation.googleEventId) {
+        const calendar = new CalendarService(c.env);
+        // Pass 'none' to suppress email to patient
+        await calendar.deleteEvent(reservation.googleEventId, 'none');
+    }
 
     await sheets.logAction('admin', 'cancel', { slotId, reservationId });
 

@@ -327,7 +327,7 @@ function App() {
                         <option value="" disabled>時間を選択してください</option>
                         {filteredSlots.map(slot => (
                           <option key={slot.slotId} value={slot.slotId} disabled={slot.status === 'booked'}>
-                            {slot.startTime} {slot.status === 'booked' ? '(満席)' : '◎ 予約可'}
+                            {slot.startTime} {slot.status === 'booked' ? '×' : '◎ 予約可'}
                           </option>
                         ))}
                       </select>

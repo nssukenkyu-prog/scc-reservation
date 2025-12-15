@@ -162,4 +162,33 @@ export class SheetsService {
             body: JSON.stringify({ values: [[status]] })
         });
     }
+
+    async getReservation(reservationId: string): Promise<Reservation | null> {
+        const token = await this.getToken();
+        const range = 'Reservations!A:L'; // Up to col L to cover all fields including email
+        const url = `https://sheets.googleapis.com/v4/spreadsheets/${this.env.SPREADSHEET_ID}/values/${range}`;
+
+        const res = await fetch(url, { headers: { Authorization: `Bearer ${token}` } });
+        const data = await res.json() as { values: string[][] };
+        if (!data.values) return null;
+
+        const row = data.values.find(r => r[0] === reservationId);
+        if (!row) return null;
+
+        // Map row to Reservation
+        return {
+            reservationId: row[0],
+            name: row[1],
+            phone: row[2],
+            visitType: row[3] as VisitType,
+            date: row[4],
+            startTime: row[5],
+            endTime: row[6],
+            lineUserId: row[7],
+            googleEventId: row[8],
+            status: row[9] as 'active' | 'cancelled',
+            createdAt: row[10],
+            email: row[11],
+        };
+    }
 }
