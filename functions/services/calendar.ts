@@ -46,12 +46,12 @@ export class CalendarService {
             event.colorId = '9';
         }
 
-        // Add attendee if email exists (Triggers Google's invitation email)
-        if (resv.email) {
-            event.attendees = [{ email: resv.email }];
-        }
+        // Disable Calendar Invitations (User uses GAS for emails)
+        // if (resv.email) {
+        //     event.attendees = [{ email: resv.email }];
+        // }
 
-        const url = `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events?sendUpdates=all`;
+        const url = `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events?sendUpdates=none`;
 
         const response = await fetch(url, {
             method: 'POST',
