@@ -27,7 +27,7 @@ const generateDateOptions = () => {
 };
 
 function App() {
-  const [view, setView] = useState<'lp' | 'home' | 'booking' | 'confirm' | 'success' | 'admin'>('lp');
+  const [view, setView] = useState<'lp' | 'home' | 'booking' | 'confirm' | 'success' | 'admin' | 'admin_login'>('lp');
   const [visitType, setVisitType] = useState<VisitType>('初診');
   const dateOptions = generateDateOptions();
   const [selectedDate, setSelectedDate] = useState<string>(dateOptions[0].value);
@@ -35,14 +35,44 @@ function App() {
   const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null);
   const [formData, setFormData] = useState({ name: '', phone: '', email: '' });
   const [loading, setLoading] = useState(false);
+  const [adminPassword, setAdminPassword] = useState('');
+  const [adminToken, setAdminToken] = useState('');
 
   // Check for admin flag
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get('mode') === 'admin') {
-      setView('admin');
+      const storedToken = sessionStorage.getItem('scc_admin_token');
+      if (storedToken) {
+        setAdminToken(storedToken);
+        setView('admin');
+      } else {
+        setView('admin_login');
+      }
     }
   }, []);
+
+  const handleLogin = async (e: FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const res = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: adminPassword })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        const token = data.token;
+        setAdminToken(token);
+        sessionStorage.setItem('scc_admin_token', token);
+        setView('admin');
+      } else {
+        alert('パスワードが間違っています');
+      }
+    } catch (e) { alert('Error: ' + e); }
+    setLoading(false);
+  };
 
   const fetchSlots = async () => {
     setLoading(true);
@@ -110,7 +140,10 @@ function App() {
     try {
       const res = await fetch('/api/admin/slots', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Basic ${adminToken}` // Send token
+        },
         body: JSON.stringify({ date: selectedDate, days })
       });
       const data = await res.json();
@@ -159,7 +192,7 @@ function App() {
           border: '1px solid rgba(255,255,255,0.5)'
         }}>
           <h1 style={{ margin: 0, fontSize: '1.2rem', color: '#1e293b', letterSpacing: '0.05em' }}>
-            SCC 初診・再診専用予約フォーム
+            初診・再診専用予約フォーム
           </h1>
           <div style={{ width: '40px', height: '4px', background: 'linear-gradient(90deg, #0284c7, #38bdf8)', margin: '1rem auto', borderRadius: '2px' }}></div>
           <p style={{ margin: 0, fontSize: '1.1rem', fontWeight: 'bold', color: '#0f172a' }}>日本体育大学 スポーツキュアセンター<br />横浜・健志台接骨院</p>
@@ -484,7 +517,13 @@ function App() {
           <div style={{ background: 'white', padding: '2rem', borderRadius: '24px', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.1)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
               <h2 style={{ margin: 0, color: '#0f172a' }}>管理画面</h2>
-              <button onClick={() => setView('lp')} style={{ padding: '0.6rem 1.2rem', background: '#f1f5f9', border: 'none', borderRadius: '12px', cursor: 'pointer', fontWeight: 'bold', color: '#475569' }}>ログアウト</button>
+              <h2 style={{ margin: 0, color: '#0f172a' }}>管理画面</h2>
+              <button onClick={() => {
+                sessionStorage.removeItem('scc_admin_token');
+                setAdminToken('');
+                setAdminPassword('');
+                setView('lp');
+              }} style={{ padding: '0.6rem 1.2rem', background: '#f1f5f9', border: 'none', borderRadius: '12px', cursor: 'pointer', fontWeight: 'bold', color: '#475569' }}>ログアウト</button>
             </div>
 
             <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem', flexWrap: 'wrap', alignItems: 'center' }}>
@@ -549,7 +588,10 @@ function App() {
                               try {
                                 const res = await fetch('/api/cancel', {
                                   method: 'POST',
-                                  headers: { 'Content-Type': 'application/json' },
+                                  headers: {
+                                    'Content-Type': 'application/json',
+                                    'Authorization': `Basic ${adminToken}`
+                                  },
                                   body: JSON.stringify({
                                     slotId: slot.slotId,
                                     reservationId: slot.reservationId,
@@ -573,7 +615,10 @@ function App() {
                               try {
                                 const res = await fetch('/api/bookings', {
                                   method: 'POST',
-                                  headers: { 'Content-Type': 'application/json' },
+                                  headers: {
+                                    'Content-Type': 'application/json',
+                                    'Authorization': `Basic ${adminToken}`
+                                  },
                                   body: JSON.stringify({
                                     name: '受付不可',
                                     phone: '000-0000-0000',
@@ -606,9 +651,57 @@ function App() {
           </div>
         )}
       </main>
+
+      <footer style={{ textAlign: 'center', padding: '2rem 0', color: '#94a3b8', fontSize: '0.9rem', fontWeight: 'bold' }}>
+        &copy; Sport Cure Center
+      </footer>
+
+      {view === 'admin_login' && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          background: 'rgba(255,255,255,0.8)', backdropFilter: 'blur(5px)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999
+        }}>
+          <div style={{
+            background: 'white', padding: '3rem', borderRadius: '24px',
+            boxShadow: '0 25px 50px -12px rgba(0,0,0,0.2)', width: '90%', maxWidth: '400px',
+            border: '1px solid #e2e8f0'
+          }}>
+            <h2 style={{ textAlign: 'center', marginTop: 0, marginBottom: '2rem', color: '#0f172a' }}>管理者ログイン</h2>
+            <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+              <div>
+                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold', color: '#64748b' }}>パスワード</label>
+                <input
+                  type="password"
+                  value={adminPassword}
+                  onChange={e => setAdminPassword(e.target.value)}
+                  style={{ width: '100%', padding: '1rem', borderRadius: '12px', border: '2px solid #e2e8f0', fontSize: '1.1rem', outline: 'none', boxSizing: 'border-box' }}
+                  placeholder="Password"
+                  autoFocus
+                />
+              </div>
+              <button
+                type="submit"
+                disabled={loading}
+                style={{
+                  background: '#0f172a', color: 'white', border: 'none',
+                  padding: '1rem', borderRadius: '12px', fontWeight: 'bold', fontSize: '1.1rem',
+                  cursor: 'pointer', opacity: loading ? 0.7 : 1
+                }}
+              >
+                {loading ? '認証中...' : 'ログイン'}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
+
+
+
 
 export default App;
 

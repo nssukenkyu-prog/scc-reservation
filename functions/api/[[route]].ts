@@ -15,7 +15,35 @@ app.get('/api/slots', async (c) => {
     return c.json(slots);
 });
 
+
+// Helper for admin auth
+const checkAuth = async (c: any) => {
+    const authHeader = c.req.header('Authorization') || '';
+    const [scheme, token] = authHeader.split(' ');
+
+    // In a real app we would verify a JWT.
+    // Here we re-create the expected token `btoa("admin:" + c.env.ADMIN_PASSWORD)`
+    // OR we can just simple-check if token matches.
+
+    // Simpler approach for this specific request:
+    // The frontend sends `Basic base64(admin:password)`.
+    // So Scheme should be "Basic".
+
+    if (scheme !== 'Basic') return false;
+
+    // Decode token
+    try {
+        const decoded = atob(token);
+        const [user, pass] = decoded.split(':');
+        return user === 'admin' && pass === c.env.ADMIN_PASSWORD;
+    } catch (e) {
+        return false;
+    }
+};
+
 app.post('/api/admin/slots', async (c) => {
+    if (!await checkAuth(c)) return c.json({ error: 'Unauthorized' }, 401);
+
     const body = await c.req.json();
     const { date, days = 1 } = body; // Support bulk generation
     if (!date) return c.json({ error: 'Date required' }, 400);
@@ -93,6 +121,12 @@ app.post('/api/admin/slots', async (c) => {
 app.post('/api/bookings', async (c) => {
     const body = await c.req.json();
     const { slotId, patientId, name, phone, visitType, email, date, lineUserId } = body; // Add email and date, keep lineUserId for reservation object
+
+    // Admin Block check for SECURITY
+    // If name is '受付不可' (Admin booking), we MUST verify it is actually an admin.
+    if (name === '受付不可') {
+        if (!await checkAuth(c)) return c.json({ error: 'Unauthorized Admin Block' }, 401);
+    }
 
     if (!slotId || !name || !phone || !visitType || !date) return c.json({ error: 'Missing fields' }, 400);
 
@@ -192,6 +226,8 @@ app.post('/api/bookings', async (c) => {
 });
 
 app.post('/api/cancel', async (c) => {
+    if (!await checkAuth(c)) return c.json({ error: 'Unauthorized' }, 401);
+
     const body = await c.req.json();
     const { slotId, reservationId } = body;
 

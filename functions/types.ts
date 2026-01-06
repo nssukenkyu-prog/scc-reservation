@@ -4,6 +4,7 @@ export interface Env {
     GOOGLE_PROJECT_ID: string;
     SPREADSHEET_ID: string;
     CALENDAR_ID: string;
+    ADMIN_PASSWORD?: string;
 }
 
 export type VisitType = '初診' | '再診' | 'shared';
