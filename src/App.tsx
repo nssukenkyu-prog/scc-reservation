@@ -13,13 +13,20 @@ interface Slot {
 }
 
 // Helper to generate date options (Next 14 days)
+const getLocalISODate = (d: Date) => {
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
 const generateDateOptions = () => {
   const options = [];
   const today = new Date();
   for (let i = 0; i < 14; i++) {
     const d = new Date(today);
     d.setDate(today.getDate() + i);
-    const dateStr = d.toISOString().split('T')[0];
+    const dateStr = getLocalISODate(d);
     const label = `${d.getMonth() + 1}/${d.getDate()} (${['日', '月', '火', '水', '木', '金', '土'][d.getDay()]})`;
     options.push({ value: dateStr, label });
   }
@@ -165,8 +172,8 @@ function App() {
 
     // 2. Filter by Time (Realtime restriction: > 15 mins from now)
     const now = new Date();
-    const selected = new Date(selectedDate);
-    const isToday = selected.toDateString() === now.toDateString();
+    const todayStr = getLocalISODate(now);
+    const isToday = selectedDate === todayStr;
 
     if (isToday) {
       const [hours, minutes] = slot.startTime.split(':').map(Number);
@@ -175,7 +182,9 @@ function App() {
       const diffMinutes = (slotTime.getTime() - now.getTime()) / (1000 * 60);
       return diffMinutes >= 15;
     }
-    if (selected < new Date(new Date().toDateString())) return false;
+
+    // For future dates, just check if it's >= today
+    if (selectedDate < todayStr) return false;
     return true;
   });
 

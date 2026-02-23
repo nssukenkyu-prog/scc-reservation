@@ -57,7 +57,11 @@ app.post('/api/admin/slots', async (c) => {
     for (let i = 0; i < days; i++) {
         const targetDate = new Date(startDate);
         targetDate.setDate(startDate.getDate() + i);
-        const dateStr = targetDate.toISOString().split('T')[0];
+        // Format targetDate to YYYY-MM-DD reliably without UTC shift from toISOString
+        const year = targetDate.getFullYear();
+        const month = String(targetDate.getMonth() + 1).padStart(2, '0');
+        const day = String(targetDate.getDate()).padStart(2, '0');
+        const dateStr = `${year}-${month}-${day}`;
 
         // Check if slots already exist for this date
         const existing = await sheets.getSlots(dateStr);
@@ -67,8 +71,8 @@ app.post('/api/admin/slots', async (c) => {
         }
 
         // Generate slots
-        const day = targetDate.getDay();
-        const isWeekend = day === 0 || day === 6;
+        const dayOfWeek = targetDate.getDay();
+        const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
 
         let startHour = 9;
         let startMin = 0;
